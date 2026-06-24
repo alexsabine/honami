@@ -1,0 +1,5 @@
+# robots.txt for https://www.honami.co.uk/
+User-agent: *
+Allow: /
+
+Sitemap: https://www.honami.co.uk/sitemap.xml
