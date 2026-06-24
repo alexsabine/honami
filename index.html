@@ -278,20 +278,22 @@
 
   /* footer */
   footer.foot{ border-top:1px solid var(--rule); background:var(--paper-warm);
-    margin-top:2rem; position:relative; overflow:hidden; padding-bottom:clamp(80px,11vw,130px); }
+    margin-top:2rem; position:relative; overflow:visible; padding-bottom:clamp(80px,11vw,130px); }
   .foot .wrap{ padding-top:2.6rem; padding-bottom:2.6rem;
     display:flex; flex-wrap:wrap; align-items:flex-start;
     justify-content:space-between; gap:1.6rem; position:relative; z-index:2; }
+  .foot > .wrap:first-of-type{ padding-bottom:1.4rem; }
   #footgrass{ position:absolute; left:0; right:0; bottom:0; width:100%;
-    height:clamp(96px,11vw,150px); display:block; z-index:1; pointer-events:none; }
+    height:clamp(120px,14vw,190px); display:block; z-index:1; pointer-events:none; }
   .foot .mark{ font-family:"Fraunces",serif; font-size:1.45rem; color:var(--ink);
     letter-spacing:.02em; }
   .foot .tag2{ font-size:.86rem; color:#5e7064; margin-top:.4rem; max-width:22rem;
     line-height:1.55; }
   .foot nav{ display:flex; gap:1.5rem; flex-wrap:wrap; font-size:.82rem;
     letter-spacing:.05em; }
+  .foot .legalwrap{ position:relative; z-index:0; padding-top:0; padding-bottom:0; margin-top:.2rem; display:block; }
   .foot .legal{ width:100%; border-top:1px solid var(--rule); padding-top:1.3rem;
-    margin-top:.4rem; font-family:"JetBrains Mono","Inter",monospace;
+    margin-top:0; font-family:"JetBrains Mono","Inter",monospace;
     font-size:.68rem; letter-spacing:.06em; color:var(--ink-dim);
     display:flex; flex-wrap:wrap; gap:.4rem 1.4rem; }
 
@@ -559,6 +561,8 @@
         <a href="#about">About</a>
         <a href="#enquire">Enquire</a>
       </nav>
+    </div>
+    <div class="wrap legalwrap">
       <div class="legal">
         <span>&copy; 2026 Honami</span>
         <span>Ventnor, Isle of Wight, UK</span>
@@ -898,7 +902,7 @@
     ctx.setTransform(DPR,0,0,DPR,0,0);
     baseY=H+1;                                  // roots at the very bottom edge
     _seed=20260624; blades=[];
-    const reachMax=H*0.96, hMin=H*0.55;         // tall enough to fill the band
+    const reachMax=H*0.88, hMin=H*0.46;         // shorter, calmer band
     const step=Math.max(2,Math.round(W/360));   // denser
     for(let x=0;x<W;x+=step){
       const xf=x/W;
