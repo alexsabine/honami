@@ -15,7 +15,100 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Honami — header</title>
+
+<!-- Primary meta -->
+<title>Honami — A UK consultancy for human + AI alignment & change</title>
+<meta name="description" content="Honami builds the conditions in which people and systems change well. A UK consultancy working where contemplative practice, complex-systems science and the craft of building technology meet — advisory, the design and communication of complex ideas, facilitation and applied research.">
+<meta name="author" content="Alexander Sabine">
+<meta name="keywords" content="human-AI alignment, change management consultancy, complex systems, contemplative practice, AI alignment, organisational change, applied research, Alexander Sabine, Honami, Isle of Wight, United Kingdom">
+<meta name="robots" content="index, follow">
+<meta name="theme-color" content="#f4f1e9">
+<link rel="canonical" href="https://www.honami.co.uk/">
+
+<!-- Open Graph (LinkedIn, Slack, Facebook, etc.) -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Honami">
+<meta property="og:title" content="Honami — A UK consultancy for human + AI alignment & change">
+<meta property="og:description" content="Honami builds the conditions in which people and systems change well: attuned, coherent, and answerable to the ground they share.">
+<meta property="og:url" content="https://www.honami.co.uk/">
+<meta property="og:image" content="https://www.honami.co.uk/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Honami — wind moving across a field at dawn, with the wordmark and tagline 'Gracefully Adapting for Change'.">
+<meta property="og:locale" content="en_GB">
+
+<!-- Twitter / X Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Honami — A UK consultancy for human + AI alignment & change">
+<meta name="twitter:description" content="Honami builds the conditions in which people and systems change well: attuned, coherent, and answerable to the ground they share.">
+<meta name="twitter:image" content="https://www.honami.co.uk/og-image.png">
+
+<!-- Favicons -->
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/icon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/icon-16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/icon-180.png">
+<link rel="manifest" href="/site.webmanifest">
+
+<!-- Structured data: professional service + person -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.honami.co.uk/#organization",
+      "name": "Honami",
+      "url": "https://www.honami.co.uk/",
+      "image": "https://www.honami.co.uk/og-image.png",
+      "description": "A UK consultancy working at the meeting point of contemplative practice, complex-systems science and the craft of building technology, helping people, teams and intelligent systems adapt without losing what matters.",
+      "areaServed": "Worldwide",
+      "email": "alexander@activeinference.institute",
+      "founder": { "@id": "https://www.honami.co.uk/#person" },
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ventnor, Isle of Wight",
+        "addressCountry": "GB"
+      },
+      "knowsAbout": [
+        "Human–AI alignment",
+        "Change management",
+        "Complex systems",
+        "Contemplative practice",
+        "Applied research",
+        "Learning environment design"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://www.honami.co.uk/#person",
+      "name": "Alexander Sabine",
+      "jobTitle": "Founder & Principal",
+      "worksFor": { "@id": "https://www.honami.co.uk/#organization" },
+      "url": "https://www.honami.co.uk/",
+      "identifier": "https://orcid.org/0000-0001-8462-2656",
+      "sameAs": [
+        "https://orcid.org/0000-0001-8462-2656",
+        "https://www.temporalgrammar.ai"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ventnor, Isle of Wight",
+        "addressCountry": "GB"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.honami.co.uk/#website",
+      "url": "https://www.honami.co.uk/",
+      "name": "Honami",
+      "publisher": { "@id": "https://www.honami.co.uk/#organization" },
+      "inLanguage": "en-GB"
+    }
+  ]
+}
+</script>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -38,7 +131,10 @@
     background:linear-gradient(180deg, #f3eef0 0%, #f6ecdf 45%, #f0d9b0 100%);
     overflow:hidden;
   }
-  header.hero canvas{ display:block; width:100%; height:auto; }
+  header.hero canvas{ display:block; width:100%; height:auto; aspect-ratio:1 / 0.56; }
+  /* The aspect-ratio keeps the canvas's DISPLAY box at the correct proportion during a live resize,
+     natively (before JS runs), so the buffer is never stretched non-uniformly mid-drag. JS still sets
+     exact pixel dimensions in build(); this is the CSS-level guarantee that removes the stretch. */
 
   /* clean top bar ABOVE the banner — same off-white as the page body */
   .topbar{
@@ -816,7 +912,11 @@
     // when capped. Keeps 60fps on retina, under CPU throttle, and on Firefox. The canvas ELEMENT
     // still fills its container at full CSS size (it's just upscaled from the smaller buffer).
     const cssW=hero.clientWidth;
-    const cssH=Math.max(420, Math.round(Math.min(cssW*0.56, 640)));
+    // Read the height the BROWSER actually rendered for the canvas (driven by the CSS aspect-ratio),
+    // rather than recomputing it, so the pixel buffer always matches the displayed box exactly — even
+    // mid-drag. Fall back to the formula if the element isn't laid out yet (first call).
+    let cssH=Math.round(canvas.getBoundingClientRect().height);
+    if(!cssH){ cssH=Math.max(420, Math.round(Math.min(cssW*0.56, 640))); }
     const MAX_W=1280;                              // internal buffer width cap (px)
     const deviceScale=Math.min(window.devicePixelRatio||1, 2);
     const desiredW=cssW*deviceScale;               // what full-res would be
@@ -1281,15 +1381,26 @@
     if(running)t0=performance.now()-tNow*1000;
     toggle.textContent=running?'pause the wind':'release the wind';}); }
 
-  let rAFid;
-  window.addEventListener('resize',()=>{
-    // Rebuild the whole scene on resize, throttled to one per frame. Because grass generation is
-    // now deterministic (seeded) and anchored to the word glyph and ridge crests by formula, a
-    // full rebuild reproduces the SAME field correctly fitted to the new size, with no churn and
-    // no stale frames. (Deferring the rebuild was the bug: it left old-size grass stretched across
-    // a newly-sized canvas mid-drag.)
-    cancelAnimationFrame(rAFid);
-    rAFid=requestAnimationFrame(build);
+  // Resize handling: instead of trying to rebuild the canvas coordinate system seamlessly mid-drag
+  // (which causes the grass to drift, because the whole field is regenerated from the new dimensions),
+  // we simply reload the page once the resize SETTLES. On reload, build() runs a single time at the
+  // final size and everything is correct. This trades a brief flash for guaranteed stability.
+  //
+  // Notes:
+  //  - Only WIDTH changes trigger it. Height-only changes (mobile browser chrome showing/hiding, the
+  //    address bar collapsing on scroll) must NOT reload, or mobile scrolling would reload constantly.
+  //  - Debounced: we wait for the drag to stop before reloading, so it happens once, not every frame.
+  //  - A small threshold ignores trivial 1–2px jitters.
+  const _initialW = window.innerWidth;
+  let _reloadTimer;
+  window.addEventListener('resize', ()=>{
+    if(Math.abs(window.innerWidth - _initialW) < 4) return;   // width essentially unchanged → ignore
+    clearTimeout(_reloadTimer);
+    _reloadTimer = setTimeout(()=>{
+      if(Math.abs(window.innerWidth - _initialW) >= 4){
+        window.location.reload();
+      }
+    }, 350);                                                  // reload once the drag settles
   });
 
   function start(){build();
