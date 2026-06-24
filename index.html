@@ -1,15 +1,3 @@
-<!--
-  Honami — header with landscape depth + birds. v3.
-
-  Depth = nested coherence fields (CRR cortical hierarchy, Omega scales with depth):
-    Near ridge  -> low Omega  -> crisp, high-precision, sways strongly in the gust.
-    Far ridges  -> high Omega -> porous, hazy, nearly still (atmospheric perspective
-                   falls out of the physics: distant grass desaturates, lifts toward
-                   the sky tone, and barely responds to wind).
-  The word sits on the nearest, sharpest ridge — in focus, legible.
-  Birds: two, gliding low; flight is a coherence cycle, banking at the crest, drifting
-  on the same wind that moves the grass.
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -116,105 +104,50 @@
   :root{
     --paper:#f4f1e9; --paper-warm:#efe9dc;
     --ink:#23362c; --ink-dim:#6f8576; --rule:#d9d2c2; --gold-soft:#b48a3c;
+    --amber:#b48a3c; --russet:#b0663c;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
-  body{
-    background:var(--paper);
-    color:var(--ink);
-    font-family:"Inter",system-ui,sans-serif; font-weight:300;
-    -webkit-font-smoothing:antialiased;
-  }
-  /* the header band */
-  header.hero{
-    position:relative; width:100%;
-    background:linear-gradient(180deg, #f3eef0 0%, #f6ecdf 45%, #f0d9b0 100%);
-    overflow:hidden;
-  }
-  header.hero canvas{ display:block; width:100%; height:auto; aspect-ratio:1 / 0.56; }
-  /* The aspect-ratio keeps the canvas's DISPLAY box at the correct proportion during a live resize,
-     natively (before JS runs), so the buffer is never stretched non-uniformly mid-drag. JS still sets
-     exact pixel dimensions in build(); this is the CSS-level guarantee that removes the stretch. */
+  body{ background:var(--paper); color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif; font-weight:300; -webkit-font-smoothing:antialiased; }
 
-  /* clean top bar ABOVE the banner — same off-white as the page body */
-  .topbar{
-    width:100%; background:var(--paper);
+  .topbar{ position:sticky; top:0; z-index:50; width:100%;
+    background:rgba(244,241,233,0.92);
+    backdrop-filter:saturate(1.1) blur(6px); -webkit-backdrop-filter:saturate(1.1) blur(6px);
     border-bottom:1px solid var(--rule);
-    display:flex; align-items:center; justify-content:center;
-    padding:1.05rem clamp(1.2rem,4vw,3rem);
-  }
-  .topbar ul{
-    list-style:none; display:flex; gap:clamp(2.2rem,5.5vw,4.4rem);
-    font-size:clamp(.98rem,1.25vw,1.12rem); font-weight:600;
-    letter-spacing:.13em; text-transform:uppercase;
-  }
-  .topbar a{
-    color:var(--ink); text-decoration:none; transition:color .2s;
-    padding:.25rem 0; position:relative; font-weight:600;
-  }
-  .topbar a::after{
-    content:""; position:absolute; left:0; right:0; bottom:-.3rem; height:2px;
-    background:var(--gold-soft); transform:scaleX(0); transform-origin:center;
-    transition:transform .25s ease;
-  }
-  .topbar a:hover{ color:var(--ink); }
+    display:flex; align-items:center; justify-content:center; padding:1.05rem clamp(1.2rem,4vw,3rem); }
+  .topbar ul{ list-style:none; display:flex; gap:clamp(2.2rem,5.5vw,4.4rem);
+    font-size:clamp(.92rem,1.2vw,1.08rem); font-weight:600; letter-spacing:.13em; text-transform:uppercase; }
+  .topbar a{ color:var(--ink); text-decoration:none; padding:.25rem 0; position:relative; }
+  .topbar a::after{ content:""; position:absolute; left:0; right:0; bottom:-.3rem; height:2px;
+    background:var(--gold-soft); transform:scaleX(0); transform-origin:center; transition:transform .25s ease; }
   .topbar a:hover::after{ transform:scaleX(1); }
-  @media (max-width:560px){
-    .topbar ul{ gap:1.3rem; font-size:.9rem; letter-spacing:.08em; }
-  }
-  /* sticky, slightly translucent nav so it stays available down the page */
-  .topbar{ position:sticky; top:0; z-index:50; background:rgba(244,241,233,0.92);
-    backdrop-filter:saturate(1.1) blur(6px); -webkit-backdrop-filter:saturate(1.1) blur(6px); }
+  @media (max-width:560px){ .topbar ul{ gap:1.3rem; font-size:.86rem; letter-spacing:.08em; } }
 
-  /* tagline overlaid low on the hero */
-  .hero-copy{
-    position:absolute; left:0; right:0; top:47%; z-index:4;
-    text-align:center; pointer-events:none; padding:0 1.5rem;
-  }
-  .hero-copy .tag{
-    font-family:"Fraunces",serif; font-weight:400;
-    font-size:clamp(1.7rem,4vw,2.9rem); line-height:1.12; color:#274236;
-    letter-spacing:.005em;
-    text-shadow:0 1px 16px rgba(244,238,228,0.55);
-  }
+  header.hero{ position:relative; width:100%; overflow:hidden;
+    background:linear-gradient(180deg, var(--paper) 0%, var(--paper) 54%, #f1ebdd 100%); }
+  header.hero canvas{ display:block; width:100%; height:auto; aspect-ratio:1 / 0.46; }
+
+  .hero-copy{ position:absolute; left:0; right:0; top:68%; z-index:4; text-align:center; pointer-events:none; padding:0 1.5rem; }
+  .hero-copy .tag{ font-family:"Fraunces",serif; font-weight:400;
+    font-size:clamp(1.7rem,4vw,2.9rem); line-height:1.12; color:#274236; letter-spacing:.005em;
+    text-shadow:0 1px 16px rgba(244,238,228,0.55); }
   .hero-copy .tag .lift{ color:#b07d22; font-style:italic; }
-  .hero-copy .sub{
-    margin-top:.9rem; font-family:"Inter",sans-serif; font-weight:400;
-    font-size:clamp(.9rem,1.5vw,1.08rem); line-height:1.5; color:#3f5448;
-    letter-spacing:.055em;
-    /* widen so the descriptor sits on ONE line and fills roughly the strapline's width,
-       so the two lines read as a balanced, professional pair. Falls back to wrapping on
-       narrow screens via the clamp + text-wrap. */
-    max-width:min(92vw,58rem); margin-left:auto; margin-right:auto;
-    white-space:nowrap; overflow:hidden; text-overflow:clip;
-    text-shadow:0 1px 12px rgba(244,238,228,0.6);
-  }
-  @media (max-width:760px){
-    .hero-copy .sub{ white-space:normal; max-width:34rem; letter-spacing:.04em; }
-  }
+  .hero-copy .sub{ margin-top:.85rem; font-family:"Inter",sans-serif; font-weight:400;
+    font-size:clamp(1.02rem,1.85vw,1.32rem); line-height:1.5; color:#3f5448; letter-spacing:.04em;
+    max-width:min(94vw,52rem); margin-left:auto; margin-right:auto;
+    text-shadow:0 1px 12px rgba(244,238,228,0.6); }
+  .hero-copy .sub .em{ color:#274236; }
+  @media (max-width:760px){ .hero-copy{ top:64%; } .hero-copy .sub{ letter-spacing:.03em; } }
 
-  /* a little body below so the header reads as a real page header */
-  main{ max-width:50rem; margin:0 auto; padding:clamp(3rem,9vh,6rem) 1.5rem 6rem; }
-  main .lead{
-    font-family:"Fraunces",serif; font-weight:500; font-size:clamp(1.85rem,4.2vw,2.7rem);
-    line-height:1.26; color:var(--ink); margin-bottom:1.7rem; letter-spacing:.002em;
-  }
+  main{ margin:0 auto; padding:clamp(3rem,9vh,6rem) 0 6rem; }
+  main .lead{ font-family:"Fraunces",serif; font-weight:500; font-size:clamp(1.85rem,4.2vw,2.7rem);
+    line-height:1.26; color:var(--ink); margin-bottom:1.7rem; letter-spacing:.002em; max-width:42rem; }
   main .lead .soft{ font-weight:400; }
-  main p.body{ font-size:.97rem; line-height:1.62; color:#3f5448; max-width:33rem; font-style:italic; }
-  .controls{
-    display:flex; gap:1.2rem; align-items:center; margin-top:2.4rem;
-    font-size:.76rem; color:var(--ink-dim); letter-spacing:.04em;
-  }
-  .controls button{
-    background:transparent; border:1px solid var(--rule); color:var(--ink-dim);
-    padding:.5rem 1.05rem; border-radius:0; font:inherit; letter-spacing:.08em;
-    cursor:pointer; transition:border-color .25s,color .25s;
-  }
-  .controls button:hover,.controls button:focus-visible{ border-color:var(--gold-soft); color:var(--gold-soft); outline:none; }
-  .controls .read{ font-style:italic; font-family:"Fraunces",serif; }
-  .hint{ font-size:.68rem; color:#b3ab98; letter-spacing:.05em; font-style:italic; }
+  main p.body{ font-size:clamp(1.08rem,1.9vw,1.34rem); line-height:1.6; color:#3f5448; max-width:42rem; font-style:italic; }
 
-  /* ===== content sections (added) ===== */
+
+/* ===== content sections (added) ===== */
   .wrap{ max-width:64rem; margin:0 auto; padding:0 clamp(1.3rem,5vw,2.5rem); }
   section.band{ padding:clamp(3.6rem,8vh,6.5rem) 0; border-top:1px solid var(--rule); }
   section.band:first-of-type{ border-top:none; }
@@ -253,6 +186,11 @@
   .offer .gloss{ font-family:"Inter",sans-serif; font-size:.78rem; font-weight:500;
     letter-spacing:.04em; color:var(--gold-soft); margin-bottom:.8rem; }
   .offer p{ font-size:.95rem; line-height:1.62; color:#41564a; margin:0; }
+  .offer .practice{ margin-top:1rem; padding-top:.85rem; border-top:1px solid var(--rule);
+    font-family:"Inter",sans-serif; font-size:.86rem; line-height:1.5; color:var(--ink);
+    display:flex; gap:.6rem; align-items:baseline; }
+  .offer .practice::before{ content:"\2192"; color:var(--gold-soft); font-weight:600; flex:0 0 auto; }
+  .offer .practice .svc{ font-weight:600; }
 
   /* portfolio */
   .work{ display:flex; flex-direction:column; gap:1.1rem; margin-top:2.2rem; }
@@ -340,13 +278,14 @@
 
   /* footer */
   footer.foot{ border-top:1px solid var(--rule); background:var(--paper-warm);
-    margin-top:2rem; }
+    margin-top:2rem; position:relative; overflow:hidden; padding-bottom:clamp(80px,11vw,130px); }
   .foot .wrap{ padding-top:2.6rem; padding-bottom:2.6rem;
     display:flex; flex-wrap:wrap; align-items:flex-start;
-    justify-content:space-between; gap:1.6rem; }
+    justify-content:space-between; gap:1.6rem; position:relative; z-index:2; }
+  #footgrass{ position:absolute; left:0; right:0; bottom:0; width:100%;
+    height:clamp(96px,11vw,150px); display:block; z-index:1; pointer-events:none; }
   .foot .mark{ font-family:"Fraunces",serif; font-size:1.45rem; color:var(--ink);
     letter-spacing:.02em; }
-  .foot .mark .jp{ color:var(--ink-dim); font-size:1.05rem; margin-left:.5rem; }
   .foot .tag2{ font-size:.86rem; color:#5e7064; margin-top:.4rem; max-width:22rem;
     line-height:1.55; }
   .foot nav{ display:flex; gap:1.5rem; flex-wrap:wrap; font-size:.82rem;
@@ -374,8 +313,12 @@
     margin-top:.3rem; line-height:1.45; }
   /* square edges everywhere — house preference */
   *, *::before, *::after{ border-radius:0 !important; }
+
+  /* square edges everywhere — house preference */
+  *, *::before, *::after{ border-radius:0 !important; }
 </style>
 </head>
+
 <body>
   <nav class="topbar">
     <ul>
@@ -385,17 +328,20 @@
       <li><a href="#enquire">Enquire</a></li>
     </ul>
   </nav>
+
   <header class="hero" id="hero">
-    <canvas id="c" role="img" aria-label="The word Honami catching low sunset light, on grass ridges with rolling mist below"></canvas>
+    <canvas id="c" role="img" aria-label="The word Honami in still ink as golden light sweeps through it; beneath, a meadow of grass with waves of wind travelling one way across it, the blades reaching up toward the word as each wave passes"></canvas>
     <div class="hero-copy">
-      <p class="tag" id="heroTag">Gracefully Adapting for <span class="lift" id="heroLift">Change</span></p>
-      <p class="sub" id="heroSub">A UK-based alignment consultancy specialising in human–AI alignment for future flourishing</p>
+      <p class="tag">Meaning Through <span class="lift">Change</span></p>
+      <p class="sub">A UK consultancy for intelligent alignment, where contemplative practice, complex-systems science and the craft of building meet</p>
     </div>
   </header>
 
-  <main>
-    <p class="lead">Honami builds the conditions in which people and systems change well: <span class="soft">attuned, coherent, and answerable to the ground they share.</span></p>
-    <p class="body">Good change is grown, not forced. We work where contemplative practice, complex-systems science, and the craft of building technology meet, designing the environments, rhythms and tools that let a person, a team, or an intelligent system adapt without losing what matters.</p>
+<main>
+    <div class="wrap">
+      <p class="lead">Honami builds the conditions in which people and systems change well: <span class="soft">attuned, coherent, and answerable to the ground they share.</span></p>
+      <p class="body">Good change is grown, not forced. We work where contemplative practice, complex-systems science, and the craft of building technology meet, designing the environments, rhythms and tools that let a person, a team, or an intelligent system adapt without losing what matters.</p>
+    </div>
   </main>
 
   <!-- ================= APPROACH ================= -->
@@ -405,7 +351,7 @@
       <h2 class="h">Helping a system change <span class="lift">without losing itself</span></h2>
       <p class="intro">Every living thing, whether a person, a team, or an organisation, survives by metabolising its past into its future: gathering what works, meeting the moments where the old shape no longer fits, and rebuilding from what mattered.</p>
       <p class="copy">Change rarely fails for want of effort. It fails when a system reorganises at the wrong moment, loses the thread of meaning under the noise, grips too tightly to stay creative, or bends so far it forgets what it was. Our work touches the few things that are actually within a system's control: <span class="em">when it reorganises, how readily it makes sense of things, and how open it stays</span>, so that the one thing that shouldn't change, its character, comes through the other side intact.</p>
-      <p class="copy">Four practices, one craft. Each is a way of working with a system's rhythm, its form, and its porosity.</p>
+      <p class="copy">Four practices, one craft. Each is a way of working with a system's rhythm, its form, and its porosity — and each comes down to something concrete we can do with you.</p>
 
       <div class="offers">
         <div class="offer">
@@ -413,24 +359,28 @@
           <h3>Adaptive Pacing</h3>
           <div class="gloss">Finding the right rhythm: when to learn, when to act</div>
           <p>The function of a change depends less on its size than on its timing: whether it lands in a moment for learning or a moment for action. We help organisations find a cadence of reorganisation that is neither thrash nor lock-in, but the poised, slow-and-steady pace that sits just before the threshold, where responsiveness is highest.</p>
+          <div class="practice"><span><span class="svc">In practice:</span> understanding your organisation as a living system transforming through time, so you can read where you are in the cycle and act with the grain of change.</span></div>
         </div>
         <div class="offer">
           <div class="num">02 &middot; FORM</div>
           <h3>Aesthetic Compression</h3>
           <div class="gloss">The right skin: meaning carried by how a thing looks and acts</div>
           <p>Beauty is not decoration; it is how meaning travels quickly and is remembered. The right form, in language, in design, in how a thing is done, lets people absorb a complex idea as a felt whole rather than a chore. We make work hospitable and precise at once, because what is made beautiful is what an organisation carries forward.</p>
+          <div class="practice"><span><span class="svc">In practice — Sky &amp; Ground:</span> ranging wide across disciplines to imagine boldly, while keeping that vision tethered to forms you can actually build — expansive thinking with a centre of gravity, brought down to something real.</span></div>
         </div>
         <div class="offer">
           <div class="num">03 &middot; LIGHTNESS</div>
           <h3>Playful by Design</h3>
           <div class="gloss">Lightness of being at the technological and philosophical frontier</div>
           <p>Frontier technology and the questions it raises tend to make organisations rigid: defensive, gripping, narrow. Play is the everyday technology for staying open under exactly those conditions: it keeps deep history accessible and many futures live. We bring a deliberate lightness that protects the capacity to explore when it most wants to collapse.</p>
+          <div class="practice"><span><span class="svc">In practice:</span> facilitated workshops that bring challenging ideas to life through play, so a team can pick them up, handle them, and leave with shared understanding and momentum.</span></div>
         </div>
         <div class="offer">
           <div class="num">04 &middot; CONTINUITY</div>
           <h3>Gracefully Adaptive</h3>
           <div class="gloss">Bending like bamboo, while keeping the light within</div>
           <p>To adapt well is to bend freely while something at the centre stays whole. We help people and organisations preserve their core commitments <span class="em">through</span> discontinuity rather than in spite of it; rebuilding from what mattered, so that identity survives reorganisation. Change becomes something a coherent thing can pass through and remain itself.</p>
+          <div class="practice"><span><span class="svc">In practice:</span> frontier-technology consultancy — helping your organisation adapt to AI with care, at a pace your people and values can absorb.</span></div>
         </div>
       </div>
     </div>
@@ -590,7 +540,7 @@
         <div class="card">
           <div class="label" style="margin-bottom:.8rem;">What we offer</div>
           <p class="copy" style="margin-bottom:1.1rem;">Advisory on adaptive change &amp; human&ndash;AI alignment &middot; aesthetic and editorial craft for difficult ideas &middot; facilitation of interdisciplinary gatherings &middot; web and communication design.</p>
-          <a class="cta" href="mailto:alexander@activeinference.institute?subject=Honami%20enquiry">Send an enquiry</a>
+          <a class="cta" href="mailto:info@honami.co.uk?subject=Honami%20enquiry">Send an enquiry</a>
         </div>
       </div>
     </div>
@@ -600,8 +550,8 @@
   <footer class="foot">
     <div class="wrap">
       <div>
-        <div class="mark">Honami<span class="jp">&#31313;&#27874;</span></div>
-        <div class="tag2">Gracefully adapting for change. Local attention becoming global form.</div>
+        <div class="mark">Honami</div>
+        <div class="tag2">Meaning through change. Local attention becoming global form.</div>
       </div>
       <nav>
         <a href="#approach">Approach</a>
@@ -612,817 +562,430 @@
       <div class="legal">
         <span>&copy; 2026 Honami</span>
         <span>Ventnor, Isle of Wight, UK</span>
-        <span>alexander@activeinference.institute</span>
+        <span>info@honami.co.uk</span>
       </div>
     </div>
+    <canvas id="footgrass" aria-hidden="true"></canvas>
   </footer>
+
+
 <script>
-(() => {
-  const canvas = document.getElementById('c');
-  const ctx = canvas.getContext('2d');
-  let drawTarget = ctx;   // drawSky/drawRidge render here; retargeted to bg canvas during bake
-  const hero = document.getElementById('hero');
-  const word = "Honami";
+/* =========================================================================
+   HONAMI — header.
+   The grass is built EXACTLY as in the original site that read so naturally:
+     · each blade is a CLOSED bezier (up one edge, down the other), with control
+       points at ~0.42 and ~0.82 of its length, so the bend lives in the upper
+       third where a real blade is thinnest and most flexible;
+     · a bending blade FORESHORTENS vertically (tipDY = -len - |bend|*len*0.18),
+       like a stalk arcing over rather than just tilting;
+     · every blade owns its curl, flutter, bendBias, phase, width, length and
+       depth layer, so the field never moves in unison — phase spread is what
+       turns "leaning together" into a rippling wave;
+     · root->tip colour gradient, back layer darker, front layer catching light.
+   Onto that organic field we keep the current presentation:
+     · the still wordmark with a gold crest swept THROUGH the letters (masked);
+     · a DIRECTIONAL honami wave — a one-way procession of gusts (never reversing)
+       that reaches the blades up toward the word and carries the gold in the same
+       column, with a sharp Gaussian front and a long exp(C/Ω) wake.
+   ========================================================================= */
+(function(){
+  const PI=Math.PI, TAU=PI*2, SQRT2=Math.SQRT2;
+  const hero=document.getElementById('hero');
+  const canvas=document.getElementById('c');
+  const ctx=canvas.getContext('2d');
+  const prefersReduce = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // ---- CRR constants ----
-  const Omega0  = 1/(2*Math.PI);
-  const C_star  = 2*Math.PI;
-  const C_poise = C_star - Omega0;
-  const SQRT2   = Math.SQRT2;
-  const BREATH  = Math.PI*Math.PI;     // ~9.87s
-
-  // ---- DAY CYCLE: a slow descent into twilight. dayPhase 0 (golden) -> 1 (deep dusk). ----
-  // One parameter recolours sky, sun, mist, and ridges together so the scene shifts coherently.
-  const DAY_PERIOD = 90;               // seconds for a full golden->dusk descent (slow, calm)
-  function dayPhase(t){
-    // ease in/out so it lingers at golden and at dusk, like a real slow sunset
-    const raw = 0.5 - 0.5*Math.cos(2*Math.PI*(t/(DAY_PERIOD*2)));  // 0..1..0 ping-pong
-    return raw;
-  }
-  // palette keyframes by phase: [phase, {skyTop, skyMid, skyHorizon, sunCore, sunRim, mist, ridgeNear, ridgeFar}]
-  function mix(a,b,k){return [Math.round(a[0]+(b[0]-a[0])*k),Math.round(a[1]+(b[1]-a[1])*k),Math.round(a[2]+(b[2]-a[2])*k)];}
-  const rgbStr=(c,a)=> a==null?`rgb(${c[0]},${c[1]},${c[2]})`:`rgba(${c[0]},${c[1]},${c[2]},${a})`;
-  const DAY=[
-    // GOLDEN (phase 0)
-    {p:0.0,
-      skyTop:[241,236,240], skyMid:[247,221,201], skyHorizon:[234,208,160],
-      sunCore:[255,250,235], sunRim:[255,206,120], mist:[212,210,196],
-      ridgeNear:[38,74,56], ridgeFar:[120,156,128]},
-    // AMBER/ROSE (phase 0.55)
-    {p:0.55,
-      skyTop:[223,206,214], skyMid:[238,196,178], skyHorizon:[224,158,128],
-      sunCore:[255,240,214], sunRim:[247,158,108], mist:[196,190,192],
-      ridgeNear:[34,58,54], ridgeFar:[110,128,130]},
-    // DEEP DUSK (phase 1.0)
-    {p:1.0,
-      skyTop:[60,62,92], skyMid:[96,84,118], skyHorizon:[150,98,96],
-      sunCore:[255,224,186], sunRim:[214,120,108], mist:[120,128,150],
-      ridgeNear:[20,28,40], ridgeFar:[58,66,92]},
-  ];
-  function palette(ph){
-    // find bracketing keyframes
-    let a=DAY[0],b=DAY[DAY.length-1];
-    for(let i=0;i<DAY.length-1;i++){ if(ph>=DAY[i].p && ph<=DAY[i+1].p){a=DAY[i];b=DAY[i+1];break;} }
-    const k=(ph-a.p)/(b.p-a.p || 1);
-    const out={};
-    for(const key of Object.keys(a)){ if(key==='p')continue; out[key]=mix(a[key],b[key],k); }
-    return out;
-  }
-
-  // ---- value noise + curl field for rolling mist (divergence-free eddies) ----
-  function nhash(x,y){const n=Math.sin(x*127.1+y*311.7)*43758.5453;return n-Math.floor(n);}
-  function nsmooth(t){return t*t*(3-2*t);}
-  function vnoise(x,y){
-    const xi=Math.floor(x),yi=Math.floor(y),xf=x-xi,yf=y-yi;
-    const a=nhash(xi,yi),b=nhash(xi+1,yi),c=nhash(xi,yi+1),d=nhash(xi+1,yi+1);
-    const u=nsmooth(xf),v=nsmooth(yf);
-    return a*(1-u)*(1-v)+b*u*(1-v)+c*(1-u)*v+d*u*v;
-  }
-  function fbm(x,y){let s=0,amp=0.5,f=1;for(let i=0;i<4;i++){s+=amp*vnoise(x*f,y*f);f*=2;amp*=0.5;}return s;}
-  // curl of an fbm potential = swirling, incompressible eddy velocity (each eddy = SO(2) cell)
-  function curl(x,y,t){
-    const e=0.1;
-    const p=(xx,yy)=>fbm(xx*0.8+t*0.015, yy*0.8);
-    const dphidy=(p(x,y+e)-p(x,y-e))/(2*e);
-    const dphidx=(p(x+e,y)-p(x-e,y))/(2*e);
-    return [dphidy,-dphidx];
-  }
-
-
-  // ---- iridescence hue (phase -> colour), same SO(2) rotation as before ----
-  const HUE = [
-    [0.00,120,0.26,0.40],[0.30,150,0.26,0.47],[0.55,46,0.52,0.58],
-    [0.75,348,0.22,0.56],[1.00,120,0.26,0.40],
-  ];
-  function hueAt(p){
-    p=p-Math.floor(p);
-    for(let i=0;i<HUE.length-1;i++){const a=HUE[i],b=HUE[i+1];
-      if(p>=a[0]&&p<=b[0]){const k=(p-a[0])/(b[0]-a[0]);
-        let h0=a[1],h1=b[1],dh=((h1-h0+540)%360)-180;
-        return [(h0+dh*k+360)%360,a[2]+(b[2]-a[2])*k,a[3]+(b[3]-a[3])*k];}}
-    return [120,0.26,0.40];
-  }
+  const lerp=(a,b,t)=>a+(b-a)*t;
+  const clamp01=v=>v<0?0:v>1?1:v;
+  const smooth=t=>t*t*(3-2*t);
   const hsl=(h,s,l,a=1)=>`hsla(${h.toFixed(1)},${(s*100).toFixed(1)}%,${(l*100).toFixed(1)}%,${a})`;
+  let _seed=20260624;
+  const rnd=()=>{ _seed=(_seed*1664525+1013904223)>>>0; return _seed/4294967296; };
 
-  // sky/haze tones — now dusk-tuned. Haze lifts ridges toward a warm hazy horizon, not white.
-  const SKY=[244,241,233];                 // upper sky (still pale)
-  const HORIZON=[238,206,158];             // warm hazy band near the sun
-  const lerp=(a,b,k)=>a+(b-a)*k;
-  function hazeRGB(rgb,haze){ return [Math.round(lerp(rgb[0],SKY[0],haze)),
-    Math.round(lerp(rgb[1],SKY[1],haze)),Math.round(lerp(rgb[2],SKY[2],haze))]; }
+  let DPR=Math.min(window.devicePixelRatio||1,2);
+  let W=0,H=0;
+  let cy=0, size=0, yb=0, baseY=0, hMin=0, NB=0;
+  let blades=[];
 
-  // ---- CRR SUN: a physically-modelled setting sun (real to the eye, still subtle) ----
-  // Modelled, not faked:
-  //  · Solar DISC with limb darkening  I(mu)=1-u(1-mu), u=0.6 (real solar value): rim dimmer than core.
-  //  · Atmospheric SCATTERING glow  ~ exp(-r/h): optical-depth decay = the CRR exp(C/Omega) memory
-  //    kernel, the light's coherence dissipating through the medium. Reddens as it spreads
-  //    (blue scattered away -> gold->amber->rose), and spreads more vertically near the horizon.
-  //  · Horizon REFRACTION: the low disc is flattened ~6% vertically, as real setting suns appear.
-  // Rendered per-pixel into an offscreen buffer (built once per resize) for a smooth, real falloff.
-  // current day phase, updated each frame
-  let curPhase=0;
-  function sunPos(){
-    const ph=curPhase;
-    const sx = W*0.66;                      // golden-section right (off-centre, the poised placement)
-    // sun DESCENDS as the day phase advances: high-ish at golden -> sinks below horizon at dusk
-    const sy = H*(0.30 + ph*0.20);          // 0.30H (golden) -> 0.50H (sinking into the ridges)
-    const sr = Math.min(W,H)*0.072;
-    return {sx,sy,sr};
-  }
-  // Sun = a crisp limb-darkened DISC (baked, crossfaded between 3 colour keys) + a soft BLOOM that
-  // is drawn LIVE every frame as a radial gradient. The bloom is what the eye reads as the "radial
-  // glow"; rendering it live (a continuous gradient, never 8-bit-banded, recolouring smoothly with
-  // the sky) makes the descent and the day->dusk shift perfectly smooth — no stepping in the rings.
-  const SUN_KEYS=[0.0, 0.55, 1.0];
-  const sunBufs=SUN_KEYS.map(()=>{const c=document.createElement('canvas');return {c,ctx:c.getContext('2d'),R:0};});
-  let sunBuiltScaleKeys=-1;
-  function bakeSunAt(phase, target){
-    const pal=palette(phase);
-    const {sr}=sunPos();
-    const core=pal.sunCore, rim=pal.sunRim;
-    const u=0.6, flat=0.94;
-    // bake ONLY the disc + a tight rim feather (small buffer); the wide bloom is drawn live below
-    const R=Math.ceil(sr*1.5), size=R*2;
-    target.c.width=size; target.c.height=size;
-    const img=target.ctx.createImageData(size,size);
-    const d=img.data, cx=R, cy=R;
-    function colour(I, rNorm){
-      const k=Math.min(1,Math.max(0,I));
-      let r=rim[0]+(core[0]-rim[0])*k, g=rim[1]+(core[1]-rim[1])*k, b=rim[2]+(core[2]-rim[2])*k;
-      const red=Math.min(1,rNorm*0.6); g-=18*red; b-=42*red;
-      return [Math.round(r),Math.round(Math.max(60,g)),Math.round(Math.max(40,b))];
+  // pre-rendered word + mask + gleam scratch
+  let wordCanvas=null, wordMask=null, gleam=null, gctx=null, wordW=0, wordH=0, wordX0=0, wordY0=0;
+
+  // ---- the wind: a one-way procession of gusts (the directional honami wave) ----
+  const NG=2;           // gusts crossing at once
+  const GS=0.085;       // travel speed (field-widths / sec) — slow, downwind
+  const SIGF=0.052;     // gust FRONT width (Gaussian) — sharp, downwind edge
+  const LAMB=0.165;     // gust TAIL length  (exponential) — long, slow settle, upwind wake
+  const EDGE=0.20;      // fade in upwind / out downwind
+  function gustC(i,t){ return ((t*GS + i/NG)%1+1)%1; }
+  function gustW(c){ return smooth(clamp01(c/EDGE))*smooth(clamp01((1-c)/EDGE)); }
+  function computeGusts(t){ const a=[]; for(let i=0;i<NG;i++){ const c=gustC(i,t); a.push({c,w:gustW(c)}); } return a; }
+  // reach at a point: front Gaussian (downwind), exp wake (upwind); plus which side dominates
+  function reachAt(xf,gusts){
+    let reach=0, domE=0, ahead=false;
+    for(const gp of gusts){
+      if(gp.w<0.01) continue;
+      const d=xf-gp.c;
+      const eF=(d>0)?Math.exp(-0.5*(d/SIGF)*(d/SIGF)):Math.exp(-Math.abs(d)/LAMB);
+      const e=gp.w*eF;
+      reach=reach+e-reach*e;
+      if(e>domE){ domE=e; ahead=d>0; }
     }
-    for(let y=0;y<size;y++) for(let x=0;x<size;x++){
-      const dx=(x-cx), dy=(y-cy)/flat, r=Math.hypot(dx,dy), rN=r/sr;
-      let alpha=0,I=0; const rimI=1-u;
-      if(rN<=1.0){ const mu=Math.sqrt(Math.max(0,1-rN*rN)); I=1-u*(1-mu); alpha=1.0; }
-      else { const rr=(r-sr), feather=sr*0.18, decay=Math.exp(-rr/feather);  // tight rim feather only
-             I=rimI*decay; alpha=decay; }
-      if(alpha<=0.004) continue;
-      const [rc,gc,bc]=colour(I,rN);
-      const o=(y*size+x)*4; d[o]=rc; d[o+1]=gc; d[o+2]=bc; d[o+3]=Math.round(alpha*255);
-    }
-    target.ctx.putImageData(img,0,0); target.R=R;
-  }
-  function buildSun(){                              // bake all three disc keys (once / on resize)
-    for(let i=0;i<SUN_KEYS.length;i++) bakeSunAt(SUN_KEYS[i], sunBufs[i]);
-    sunBuiltScaleKeys=Math.min(W,H);
-  }
-  function drawSunLive(){
-    if(sunBuiltScaleKeys!==Math.min(W,H) || !sunBufs[0].R) buildSun();
-    const {sx,sy,sr}=sunPos();
-    const pal=palette(curPhase);
-    // 1) LIVE BLOOM: a wide, soft radial gradient (continuous -> never bands, never steps). Its
-    //    colour is the sun's core fading out through the rim to nothing, blended over the sky.
-    const core=pal.sunCore, rim=pal.sunRim;
-    const bloomR=sr*7.5;
-    // A wide, soft radial-gradient bloom drawn live every frame. It's continuous (recolours and
-    // moves smoothly with no stepping) and cheap (one fillRect). Many closely-spaced stops on a
-    // gentle falloff keep it smooth. (A real Gaussian blur looked marginally softer but cost ~30ms
-    // a frame — far too slow — so this gradient is the right tradeoff for locked 60fps.)
-    const bloom=ctx.createRadialGradient(sx,sy,sr*0.3, sx,sy,bloomR);
-    bloom.addColorStop(0.00, rgbStr(core, 0.58));
-    bloom.addColorStop(0.06, rgbStr(core, 0.47));
-    bloom.addColorStop(0.12, rgbStr(mix(core,rim,0.35), 0.37));
-    bloom.addColorStop(0.20, rgbStr(mix(core,rim,0.7), 0.27));
-    bloom.addColorStop(0.30, rgbStr(rim, 0.185));
-    bloom.addColorStop(0.42, rgbStr(rim, 0.12));
-    bloom.addColorStop(0.55, rgbStr(rim, 0.072));
-    bloom.addColorStop(0.70, rgbStr(rim, 0.036));
-    bloom.addColorStop(0.85, rgbStr(rim, 0.013));
-    bloom.addColorStop(1.00, rgbStr(rim, 0));
-    ctx.globalCompositeOperation='source-over';
-    ctx.globalAlpha=1;
-    ctx.fillStyle=bloom;
-    ctx.fillRect(sx-bloomR, sy-bloomR, bloomR*2, bloomR*2);
-    // 2) CRISP DISC: crossfade the two nearest baked colour keys (tiny, smooth colour shift)
-    let i=0; while(i<SUN_KEYS.length-2 && curPhase>SUN_KEYS[i+1]) i++;
-    const a=sunBufs[i], b=sunBufs[i+1];
-    const span=SUN_KEYS[i+1]-SUN_KEYS[i] || 1;
-    const f=Math.min(1,Math.max(0,(curPhase-SUN_KEYS[i])/span));
-    ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
-    ctx.globalAlpha=1;     ctx.drawImage(a.c, sx-a.R, sy-a.R);
-    ctx.globalAlpha=f;     ctx.drawImage(b.c, sx-b.R, sy-b.R);
-    ctx.globalAlpha=1;
-  }
-  function drawSky(t){
-    const g=drawTarget;
-    const pal=palette(curPhase);
-    const sky=g.createLinearGradient(0,0,0,H);
-    sky.addColorStop(0.0, rgbStr(pal.skyTop));
-    sky.addColorStop(0.40, rgbStr(pal.skyMid));
-    sky.addColorStop(0.66, rgbStr(pal.skyHorizon));
-    sky.addColorStop(1.0, rgbStr(mix(pal.skyHorizon,pal.mist,0.4)));
-    g.fillStyle=sky; g.fillRect(0,0,W,H);
-    // the sun is NOT drawn here anymore — drawn live in the frame loop for continuous motion
+    return {reach:clamp01(reach), ahead};
   }
 
-  // ---- ROLLING MIST (performant): bake a seamless curl-noise fog tile ONCE, then animate
-  //      by compositing 2 layers that scroll at different speeds. No per-pixel JS per frame.
-  //      The curl-noise eddy structure is baked into the tile (still real fluid form), and the
-  //      drifting layers read as rolling mist. drawImage is GPU-accelerated -> 60fps everywhere.
-  const fogTile=document.createElement('canvas'), fogTileCtx=fogTile.getContext('2d');
-  let fogTileW=0, fogTileH=0, mistLayer=document.createElement('canvas'), mistLayerCtx=mistLayer.getContext('2d');
-  function buildFogTile(){
-    // tile is seamless horizontally (wraps) so scrolling never shows a seam
-    fogTileW=512; fogTileH=128;
-    fogTile.width=fogTileW; fogTile.height=fogTileH;
-    const img=fogTileCtx.createImageData(fogTileW,fogTileH);
-    const d=img.data;
-    for(let y=0;y<fogTileH;y++){
-      for(let x=0;x<fogTileW;x++){
-        // seamless in x: blend the noise sampled at x and at x-width, weighted by x position
-        const fx=x/fogTileW;
-        const nx=x*0.018, ny=y*0.05;
-        // curl-warped fbm for fluid eddy structure (computed ONCE, not per frame)
-        const [vx,vy]=curl(nx*0.7, ny, 0);
-        const warp=1.3;
-        const sampA=fbm(nx + vx*warp, ny + vy*warp*0.5);
-        // wrapped sample for seamlessness
-        const nx2=(x-fogTileW)*0.018;
-        const [vx2,vy2]=curl(nx2*0.7, ny, 0);
-        const sampB=fbm(nx2 + vx2*warp, ny + vy2*warp*0.5);
-        let v=sampA*(1-fx)+sampB*fx;
-        v=Math.pow(Math.max(0,v-0.30),1.15);          // thin, wispy
-        const o=(y*fogTileW+x)*4;
-        d[o]=255; d[o+1]=255; d[o+2]=255;             // white; tint applied at composite time
-        d[o+3]=Math.round(Math.max(0,Math.min(1,v))*255);
-      }
-    }
-    fogTileCtx.putImageData(img,0,0);
-  }
-  function drawMist(t){
-    if(!fogTileW) buildFogTile();
-    const pal=palette(curPhase);
-    const mc=pal.mist;
-    const LW=Math.max(160, Math.round(W/3)), LH=Math.max(120, Math.round(H/3));
-    if(mistLayer.width!==LW || mistLayer.height!==LH){ mistLayer.width=LW; mistLayer.height=LH; }
-    const m=mistLayerCtx;
-    m.globalCompositeOperation='source-over';      // explicit reset (don't rely on prior frame)
-    m.globalAlpha=1;
-    m.clearRect(0,0,LW,LH);
-    m.imageSmoothingEnabled=true;
-    const bandTop=LH*0.50, layH=LH*0.55;
-    const scaleX=LW/(fogTileW*0.6), tileDrawW=fogTileW*scaleX, tileDrawH=layH;
-    function layer(speed,yOff,alpha){
-      m.globalCompositeOperation='source-over';
-      m.globalAlpha=alpha;
-      let off=-((t*speed*(LW/W)) % tileDrawW);
-      const yy=bandTop+yOff;
-      for(let x=off; x<LW; x+=tileDrawW){ m.drawImage(fogTile, x, yy, tileDrawW, tileDrawH); }
-    }
-    layer(14,0,0.55);
-    layer(26,LH*0.06,0.45);
-    m.globalAlpha=1;
-    m.globalCompositeOperation='source-in';
-    m.fillStyle=rgbStr(mc); m.fillRect(0,0,LW,LH);
-    m.globalCompositeOperation='destination-in';
-    const mask=m.createLinearGradient(0,bandTop,0,LH);
-    mask.addColorStop(0,'rgba(0,0,0,0)');
-    mask.addColorStop(0.25,'rgba(0,0,0,0.55)');
-    mask.addColorStop(1,'rgba(0,0,0,0.9)');
-    m.fillStyle=mask; m.fillRect(0,bandTop-2,LW,LH-bandTop+2);
-    m.globalCompositeOperation='source-over';
-    ctx.globalCompositeOperation='source-over';
-    ctx.globalAlpha=0.62; ctx.imageSmoothingEnabled=true;
-    ctx.drawImage(mistLayer, 0,0,LW,LH, 0,0,W,H);
-    ctx.globalAlpha=1;
-  }
+  function breath(t){ const b=Math.cos(PI*t/(PI*PI)); return 0.5+0.5*b*b; }
+  // iridescent hue rotating on the SO(2) phase (as the original)
+  function hueAt(p){ const h=150 + 26*Math.sin(p*TAU); const s=0.42+0.12*Math.sin(p*TAU+1.2);
+    const l=0.40+0.06*Math.sin(p*TAU+2.1); return [h,s,l]; }
 
-  let DPR,W,H,blades=[],glyphImg=null,ridges=[],baselineY=0,fontSize=0;
-  // Seeded PRNG (mulberry32): grass is generated with this instead of Math.random so that
-  // rebuilding at a new size reproduces the SAME field (rescaled) rather than a new random one.
-  // This is what stops the grass "jumping" on window resize.
-  let _seed=0x6e6f6861;            // fixed seed ("noha")
-  function _srng(){ _seed|=0; _seed=_seed+0x6D2B79F5|0; let t=Math.imul(_seed^_seed>>>15,1|_seed);
-    t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }
-  function rnd(){ return _srng(); }
-  function rndReset(){ _seed=0x6e6f6861; }
-  const mask=document.createElement('canvas'), mctx=mask.getContext('2d');
-  const wc=document.createElement('canvas'), wctx=wc.getContext('2d');  // offscreen word layer
-
-  // ---- build everything on resize ----
   function build(){
-    rndReset();                                    // deterministic grass: same field on every rebuild
-    // Cap the canvas INTERNAL resolution to a fixed maximum width and let CSS scale it to fill.
-    // This is the decisive performance lever: GPU compositing cost scales with pixel count, so
-    // a soft atmospheric scene (no fine detail) renders identically but composites far cheaper
-    // when capped. Keeps 60fps on retina, under CPU throttle, and on Firefox. The canvas ELEMENT
-    // still fills its container at full CSS size (it's just upscaled from the smaller buffer).
     const cssW=hero.clientWidth;
-    // Read the height the BROWSER actually rendered for the canvas (driven by the CSS aspect-ratio),
-    // rather than recomputing it, so the pixel buffer always matches the displayed box exactly — even
-    // mid-drag. Fall back to the formula if the element isn't laid out yet (first call).
-    let cssH=Math.round(canvas.getBoundingClientRect().height);
-    if(!cssH){ cssH=Math.max(420, Math.round(Math.min(cssW*0.56, 640))); }
-    const MAX_W=1280;                              // internal buffer width cap (px)
-    const deviceScale=Math.min(window.devicePixelRatio||1, 2);
-    const desiredW=cssW*deviceScale;               // what full-res would be
-    const bufferW=Math.min(desiredW, MAX_W);       // capped
-    DPR=Math.max(0.75, bufferW/cssW);              // effective backing scale
-    W=canvas.width=Math.round(cssW*DPR);
-    H=canvas.height=Math.round(cssH*DPR);
-    canvas.style.width=cssW+'px';                  // CSS upscales the buffer to fill
-    canvas.style.height=cssH+'px';
-
-    buildRidges();
-    buildWordField();
-    buildSun();
-    buildFogTile();
+    const cssH=Math.round(Math.max(250, Math.min(cssW*0.46, 500)));
+    W=cssW; H=cssH;
+    canvas.width=Math.round(cssW*DPR); canvas.height=Math.round(cssH*DPR);
+    canvas.style.width=cssW+'px'; canvas.style.height=cssH+'px';
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    cy=H*0.34;
+    size=Math.min(H*0.24, W*0.135);
+    yb=cy + size*0.34;
+    baseY=cy + size*0.96;              // grass roots, below the word
+    hMin=size*0.30;                    // a real meadow has body even at rest
+    renderWord();
+    buildField();
   }
 
-  // ---------- RIDGES (receding hazy hills) + flowing grass on the two nearest ones ----------
-  function buildRidges(){
-    ridges=[];
-    const N=5;
-    const topY=0.40, botY=0.99;
-    for(let i=0;i<N;i++){
-      const depth=i/(N-1);
-      const yBase=H*( botY + (topY-botY)*depth );
-      const amp=H*(0.035 + 0.04*(1-depth));
-      const seed=i*1.7+0.5;
-      const k1=1.1+0.6*i, k2=2.3+0.9*i, ph1=seed*1.3, ph2=seed*2.1;
-      ridges.push({
-        depth, yBase, amp, k1,k2,ph1,ph2,
-        Omega: Omega0*(1+depth*2.2),
-        haze: depth*0.74,
-        sway: (1-depth)*0.85+0.05,
-        baseRGB: [ Math.round(lerp(38,120,depth)),
-                   Math.round(lerp(74,156,depth)),
-                   Math.round(lerp(56,128,depth)) ]
-      });
-    }
-    buildHillGrass();
-  }
-
-  // Flowing grass for the foreground hills, generated once. Ridge 0 (front) gets full-length grass
-  // matching the word; ridge 1 (behind) gets slightly shorter, hazier grass for depth. Drawn live
-  // with the same blade renderer, so they inherit the honami wave and iridescence. Kept lean for fps.
-  let hillBlades=[];
-  function buildHillGrass(){
-    hillBlades=[];
-    // Put lush grass on the two front hills whose crests sit within view. Front tier = full-length
-    // (matching the word), back tier = slightly shorter & hazier. Dense spacing so it reads as a
-    // grassy surface, not spikes.
-    // [ridgeIndex, lengthScale, density step (px), opacity, haze toward sky]
-    // The dark foreground hill (ridge 0) is left CLEAN — it's striking as a bold silhouette and
-    // anchors the composition. Grass lives on the hills behind it: a graceful flowing fringe on
-    // ridge 1, a shorter hazy hint on ridge 2. (Word-quality density across the wide foreground
-    // hill would read as sparse spikes AND break 60fps, so we keep the nearest hill clean.)
-    const tiers=[ {ri:1, lenK:1.0,  step:8.5, op:0.97, haze:0.06},   // foreground-visible hill
-                  {ri:2, lenK:0.66, step:15,  op:0.78, haze:0.32} ]; // hill behind: shorter hint
-    for(const tier of tiers){
-      const r=ridges[tier.ri];
-      const stepPx=Math.max(4, tier.step*DPR);
-      for(let x=0;x<W;x+=stepPx){
-        // clump field: grass grows in tufts with clear gaps (natural, and keeps the count down)
-        const clump=0.5+0.5*Math.sin(x*0.02 + r.ph1)*Math.sin(x*0.009 + r.ph2);
-        if(rnd() > 0.48 + clump*0.45) continue;
-        const cy=ridgeCrestY(r,x);
-        const rr=rnd();
-        const tall = rr<0.32 ? 1.6 : (rr<0.66 ? 1.2 : 0.9);
-        const len=Math.min((12*DPR)*tall*tier.lenK, H*0.12*tier.lenK)*(0.72+rnd()*0.5);
-        if(len<3*DPR) continue;
-        // each tuft is a little cluster of 1-2 blades so gaps don't look bare
-        const cluster=1+(rnd()<0.6?1:0);
-        for(let c=0;c<cluster;c++){
-          hillBlades.push({
-            x:x+(c===0?0:(rnd()-0.5)*stepPx*0.5)+(rnd()-0.5)*stepPx*0.3,
-            rootY:cy+(rnd()*1.5*DPR),
-            len:len*(c===0?1:0.8+rnd()*0.3),
-            layer:rnd()*0.6 + (tier.ri<=1?0.3:0.0),
-            jitter:(rnd()-0.5),
-            width:Math.max(1.1*DPR,(1.5+rnd()*1.0)*DPR)*(0.78+0.4*tall/1.6),
-            ph0:(rnd()-0.5)*0.5,
-            bendBias:(rnd()-0.5)*0.4,
-            curl:(rnd()*0.5+0.6),
-            flutter:(rnd()*0.5+0.5),
-            hillHaze:tier.haze,
-            hillOp:tier.op
-          });
-        }
-      }
-    }
-    hillBlades.sort((a,b)=> (a.hillHaze-b.hillHaze) || (a.x-b.x)).reverse();
-  }
-
-  function ridgeCrestY(r,x){
-    const u=x/W;
-    return r.yBase
-      - r.amp*Math.sin(u*Math.PI*r.k1*2 + r.ph1)
-      - r.amp*0.5*Math.sin(u*Math.PI*r.k2*2 + r.ph2);
-  }
-
-  // (The old baked ridge-grass texture system was removed — the hills are now clean silhouettes
-  //  and all the grass lives, long and flowing, on the word itself.)
-
-  function drawRidge(r,t){
-    const gx=drawTarget;
-    gx.globalCompositeOperation='source-over';
-    gx.globalAlpha=1;
-    const pal=palette(curPhase);
-    const base=mix(pal.ridgeNear, pal.ridgeFar, r.depth);
-    const hazeTarget=mix(pal.skyHorizon, pal.mist, 0.35);
-    const [hr,hg,hb]=mix(base, hazeTarget, r.haze);
-    gx.beginPath();
-    gx.moveTo(0,H);
-    const stepX=Math.max(2,4*DPR);
-    for(let x=0;x<=W;x+=stepX){ gx.lineTo(x, ridgeCrestY(r,x)); }
-    gx.lineTo(W,H); gx.closePath();
-    const grd=gx.createLinearGradient(0, r.yBase-r.amp, 0, H);
-    grd.addColorStop(0, `rgb(${hr},${hg},${hb})`);
-    grd.addColorStop(1, `rgb(${Math.max(0,hr-16)},${Math.max(0,hg-16)},${Math.max(0,hb-14)})`);
-    gx.fillStyle=grd; gx.fill();
-
-    // a soft haze veil pooling at each ridge base (atmospheric depth) — cheap, no per-blade grass
-    const hz0=mix(pal.skyHorizon, pal.mist, 0.5);
-    const veil=gx.createLinearGradient(0, r.yBase, 0, r.yBase+H*0.10);
-    veil.addColorStop(0,`rgba(${hz0[0]},${hz0[1]},${hz0[2]},0)`);
-    veil.addColorStop(1,`rgba(${hz0[0]},${hz0[1]},${hz0[2]},${0.12*r.haze})`);
-    gx.fillStyle=veil; gx.fillRect(0,r.yBase,W,H*0.12);
-  }
-
-  // ---------- WIND ----------
-  function wind(x,t,jitter,Omega){
-    Omega=Omega||Omega0;
-    const travel=t/BREATH;
-    // far (high Omega) fields are more porous: gentler, smoother gust response
-    const sharp=Omega0/Omega;            // 1 near, <1 far
-    const wl=W*0.34;
-    const phase=x/wl - travel + jitter*0.4;
-    const g=0.5*(1+Math.cos(2*Math.PI*phase));
-    const phase2=x/(wl*2.3) - travel*0.55 + jitter*0.4;
-    const g2=0.5*(1+Math.cos(2*Math.PI*phase2));
-    let env=0.72*g+0.28*g2;
-    // porous fields flatten the envelope toward its mean (less responsive)
-    env = 0.5 + (env-0.5)*sharp;
-    const C=env*C_star;
-    const d=Math.abs(C-C_poise)/C_poise;
-    const crest=Math.exp(-Math.pow(d*4.2,2))*sharp;
-    return {phase,env,C,crest};
-  }
-
-  // ---------- WORD on the front ridge ----------
-  function buildWordField(){
-    mask.width=W; mask.height=H;
-    mctx.clearRect(0,0,W,H);
-    mctx.fillStyle='#fff'; mctx.textAlign='center'; mctx.textBaseline='alphabetic';
-    let fs=Math.round(H*0.34);
-    mctx.font=`400 ${fs}px Fraunces, serif`;
-    while(mctx.measureText(word).width>W*0.66 && fs>10){ fs-=2; mctx.font=`400 ${fs}px Fraunces, serif`; }
-    fontSize=fs;
-    baselineY=H*0.44;                    // word sits high; tagline lives in the misty valley below
-    mctx.fillText(word,W/2,baselineY);
-    glyphImg=mctx.getImageData(0,0,W,H);
-    const img=glyphImg.data;
-    const inside=(x,y)=>{x|=0;y|=0;if(x<0||y<0||x>=W||y>=H)return false;return img[(y*W+x)*4+3]>90;};
-
+  // ---- the meadow: per-blade variation, original-style ----
+  function buildField(){
+    _seed=20260624;                    // deterministic field (stable across resizes)
     blades=[];
-    const step=Math.max(1,Math.round(2.2*DPR));
-    for(let x=0;x<W;x+=step){
-      let topY=-1; for(let y=0;y<H;y++){if(inside(x,y)){topY=y;break;}}
-      if(topY<0)continue;
-      let thick=0; for(let y=topY;y<H&&inside(x,y);y++)thick++;
-      // grass grows in TUFTS: a soft clump field makes some spots fuller, others sparse.
-      // Kept moderate for performance — the lushness comes from blade LENGTH and curve, not count.
-      const clump=0.5+0.5*Math.sin(x*0.035+0.6)*Math.sin(x*0.014+1.1);
-      const nBlades=1+(rnd()<clump*0.7?1:0);
-      for(let k=0;k<nBlades;k++){
+    // tallest blades reach to just below the letters at the crest
+    const reachMax=baseY-(yb+size*0.10);
+    const step=Math.max(2, Math.round(W/220));   // root spacing
+    for(let x=0; x<W; x+=step){
+      const xf=x/W;
+      // soft clump field -> some spots fuller, others sparse (as the original)
+      const clump=0.5+0.5*Math.sin(x*0.045+0.6)*Math.sin(x*0.018+1.1);
+      const n=1+(rnd()<clump*0.8?1:0);
+      for(let k=0;k<n;k++){
         const spread=(k===0?0:(rnd()-0.5)*step*2.4);
-        // LONG blades now: a luxuriant meadow. Mix of medium and tall, longer than before.
+        // height distribution: a mix of tall / medium / short, longer overall (luxuriant)
         const r=rnd();
-        const tall = r<0.30 ? 1.7 : (r<0.65 ? 1.25 : 0.9);        // distribution of heights
-        const len=Math.min((12*DPR+thick*0.10)*tall, H*0.12)*(0.7+rnd()*0.55);
-        if(len<3*DPR) continue;
-        // depth layer: back blades (0) sit behind & darker; front blades (1) brighter & catch light
-        const layer=rnd();
+        const tall = r<0.30 ? 1.7 : (r<0.65 ? 1.2 : 0.85);
+        const lenRest=hMin*(0.55+rnd()*0.6)*tall;          // resting length (calm field)
         blades.push({
-          x:x+spread+(rnd()-0.5)*step*0.5,
-          rootY:topY+(rnd()*2.0*DPR),
-          len,
-          layer,                                   // 0 back .. 1 front (controls colour/brightness)
+          x:x+spread+(rnd()-0.5)*step*0.5, xf,
+          rootY:baseY+(rnd()*2.2),
+          lenRest,
+          reachAdd:(reachMax-hMin)*(0.7+0.5*rnd()),        // how much this blade adds when the wave lifts it
+          layer:rnd(),                                     // 0 back(darker) .. 1 front(brighter)
           jitter:(rnd()-0.5),
-          width:Math.max(0.8*DPR,(1.1+rnd()*0.8)*DPR)*(0.7+0.5*tall/1.7), // thicker for tall
-          ph0:(rnd()-0.5)*0.5,             // wider phase spread -> rippling waves, not unison
-          bendBias:(rnd()-0.5)*0.4,        // each blade's resting lean
-          curl:(rnd()*0.5+0.6),            // how much the tip trails (upper-blade porosity)
-          flutter:(rnd()*0.5+0.5)          // per-blade responsiveness to gusts
+          width:Math.max(0.9,(1.2+rnd()*0.9))*(0.7+0.5*tall/1.7),
+          ph0:(rnd()-0.5)*0.5,                             // phase spread -> rippling, not unison
+          bendBias:(rnd()-0.5)*0.4,                        // resting lean
+          curl:(rnd()*0.5+0.6),                            // tip trail (upper-blade porosity)
+          flutter:(rnd()*0.5+0.5)                          // responsiveness to the gust
         });
       }
     }
-    // draw back layers first so front blades overlap them (depth)
-    blades.sort((a,b)=> (a.layer-b.layer) || (a.x-b.x));
+    blades.sort((a,b)=> (a.layer-b.layer) || (a.x-b.x));   // back first -> front overlaps (depth)
   }
 
-  // ---------- HONAMI WAVE (穂波): the golden wave of coherence that sweeps through the grain ----------
-  // This is the heart of the "Honami effect". In CRR terms it's a travelling locus of high coherence
-  // C — a soft Gaussian band that moves across the field. Where the band passes, blades bend more
-  // and their tips catch gold (they reach the Beauty peak B(C)=exp(C/Ω)(C*-C) together, in a wave).
-  // The crest dwells a little at the golden-section "beauty spot" (sx=0.66W) — maximum poised agency
-  // — and the whole cycle breathes on the BREATH = pi^2 period. Subtle, but unmistakably a wave.
-  function honamiWave(x, t){
-    // the wave centre sweeps left->right, easing as it crosses the golden-section beauty spot
-    const period = BREATH*1.6;                       // one full sweep ~ 16s (calm, breathing)
-    let ph = (t % period) / period;                  // 0..1 sweep progress
-    // ease-in-out so the crest lingers around the middle/beauty-spot rather than moving linearly
-    const eased = ph<0.5 ? 2*ph*ph : 1-Math.pow(-2*ph+2,2)/2;
-    const centre = -0.15 + eased*1.3;                // travels a touch beyond both edges (in 0..1 of W)
-    const xn = x / W;
-    // Gaussian band of coherence around the moving centre (width ~ 0.18 of the word)
-    const sigma = 0.17;
-    const d = (xn - centre) / sigma;
-    let amp = Math.exp(-0.5*d*d);                    // 0..1, peaks at the wave crest
-    // the wave is strongest as it crosses the golden-section beauty spot (0.66) — poised agency
-    const beautyBoost = 1 + 0.35*Math.exp(-Math.pow((centre-0.66)/0.18,2));
-    amp *= beautyBoost;
-    return Math.min(1, amp);
+  function renderWord(){
+    const S=size*DPR, pad=Math.ceil(size*0.4*DPR);
+    const meas=document.createElement('canvas').getContext('2d');
+    meas.font=`400 ${S}px Fraunces, Georgia, serif`; try{ meas.letterSpacing=`${0.015*S}px`; }catch(e){}
+    const m=meas.measureText('Honami');
+    const asc=(m.actualBoundingBoxAscent||S*0.72), desc=(m.actualBoundingBoxDescent||S*0.20);
+    wordW=Math.ceil(m.width)+pad*2; wordH=Math.ceil(asc+desc)+pad*2;
+    const bx=pad, byline=pad+asc;
+
+    wordCanvas=document.createElement('canvas'); wordCanvas.width=wordW; wordCanvas.height=wordH;
+    let g=wordCanvas.getContext('2d');
+    g.font=`400 ${S}px Fraunces, Georgia, serif`; try{ g.letterSpacing=`${0.015*S}px`; }catch(e){}
+    g.textAlign='left'; g.textBaseline='alphabetic';
+    g.shadowColor='rgba(247,242,233,0.9)'; g.shadowBlur=size*0.30*DPR;
+    g.fillStyle='rgba(33,52,42,0.30)'; g.fillText('Honami',bx,byline);
+    g.shadowColor='rgba(0,0,0,0)'; g.shadowBlur=0;
+    g.fillStyle='rgba(33,52,42,0.96)'; g.fillText('Honami',bx,byline);
+
+    wordMask=document.createElement('canvas'); wordMask.width=wordW; wordMask.height=wordH;
+    let mg=wordMask.getContext('2d');
+    mg.font=`400 ${S}px Fraunces, Georgia, serif`; try{ mg.letterSpacing=`${0.015*S}px`; }catch(e){}
+    mg.textAlign='left'; mg.textBaseline='alphabetic';
+    mg.fillStyle='#000'; mg.fillText('Honami',bx,byline);
+
+    gleam=document.createElement('canvas'); gleam.width=wordW; gleam.height=wordH; gctx=gleam.getContext('2d');
+
+    wordX0=(W - wordW/DPR)/2;
+    wordY0=yb - byline/DPR;
   }
 
-  function drawBlade(b,t,g){
-    g=g||ctx;
-    const len=b.len, rootX=b.x, rootY=b.rootY;
-    const w=wind(b.x,t,b.jitter,Omega0);
-    const honami = honamiWave(b.x, t);                 // 0..1: is the golden wave passing here now?
-    // BEND: ambient gust + the honami wave (which adds a coherent push as it sweeps through), with
-    // the upper/porous part of the blade trailing most. The honami term makes the whole field lean
-    // together in a travelling crest — the wave of grain — rather than only rippling locally.
-    const ripple = Math.sin((t/BREATH)*2*Math.PI*0.5 + b.ph0*6) * 0.22;
-    const gust = (w.env-0.5)*2;                         // -1..1 around the mean
-    const waveBend = honami * 0.9;                      // the honami crest pushes blades over together
-    const bend = (b.bendBias + gust*0.7*b.flutter + ripple + waveBend) * b.curl;
+  function drawWord(t,gusts){
+    if(!wordCanvas) return;
+    const wCss=wordW/DPR, hCss=wordH/DPR;
+    ctx.drawImage(wordCanvas, 0,0,wordW,wordH, wordX0,wordY0, wCss,hCss);
+    let best=0, bestLf=0.5;
+    for(const gp of gusts){
+      const lf=(gp.c*W - wordX0)/wCss;
+      if(lf<-0.45 || lf>1.45) continue;
+      const s=gp.w*clamp01(1.18 - Math.abs(lf-0.5)/0.98);
+      if(s>best){ best=s; bestLf=lf; }
+    }
+    const strength=0.85*best;
+    if(strength<=0.01) return;
+    const hb=0.26;
+    gctx.setTransform(1,0,0,1,0,0); gctx.clearRect(0,0,wordW,wordH);
+    gctx.globalCompositeOperation='source-over';
+    const grad=gctx.createLinearGradient(0,0,wordW,0);
+    grad.addColorStop(clamp01(bestLf-hb),'rgba(214,162,64,0)');
+    grad.addColorStop(clamp01(bestLf),   'rgba(232,182,86,1)');
+    grad.addColorStop(clamp01(bestLf+hb),'rgba(214,162,64,0)');
+    gctx.fillStyle=grad; gctx.fillRect(0,0,wordW,wordH);
+    gctx.globalCompositeOperation='destination-in'; gctx.drawImage(wordMask,0,0);
+    ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.globalAlpha=strength;
+    ctx.drawImage(gleam, 0,0,wordW,wordH, wordX0,wordY0, wCss,hCss); ctx.restore();
+  }
+
+  // ---- one blade, original construction ----
+  function drawBlade(b,t,gusts){
+    const {reach,ahead}=reachAt(b.xf,gusts);
+    const bz=breath(t);
+
+    // LENGTH: rests at lenRest, lifts toward its reach as the wave passes
+    const len=b.lenRest + b.reachAdd*reach;
+
+    // BEND: resting lean + a small ambient ripple + the wave's coherent downwind push.
+    // phase spread (ph0) keeps the field rippling rather than moving in unison.
+    const ripple = Math.sin(t*0.9 + b.ph0*6 + b.xf*7.0) * 0.18 * b.flutter;
+    const waveBend = reach * 0.95;                       // the gust pushes blades over together, downwind(+)
+    const bend = (b.bendBias + ripple + waveBend) * b.curl;
+
     const tipDX = bend * len * 0.85;
-    const tipDY = -len + Math.min(0, -Math.abs(bend)*len*0.18);
+    const tipDY = -len - Math.abs(bend)*len*0.18;        // foreshorten as it arcs over (the natural look)
+    const rootX=b.x, rootY=b.rootY;
     const c1x = rootX + tipDX*0.10, c1y = rootY - len*0.42;
     const c2x = rootX + tipDX*0.62, c2y = rootY - len*0.82;
     const tipX = rootX + tipDX,     tipY = rootY + tipDY;
 
-    // colour: iridescent, shifting along the wind phase. The honami wave lifts brightness + warms
-    // the hue toward gold as it passes — the visible golden shimmer of the wave crest.
-    const irid=0.2+0.8*w.env;
-    const pMid=w.phase+b.ph0*0.4+(0.06/SQRT2)*irid;
+    // COLOUR: iridescent on the SO(2) phase; the wave lifts brightness + warms toward gold
+    const irid=0.35+0.55*reach;
+    const pMid=(b.xf*1.3 + t*0.05) + b.ph0*0.4 + (0.06/SQRT2)*irid;
     const [hM,sM,lM]=hueAt(pMid);
-    const lift = b.layer*0.12 + honami*0.16;            // honami crest brightens the grass
-    const warm = honami*10;                             // and warms it toward gold
-    let rootCol=hsl(hM+warm*0.4, sM*(0.55+0.3*irid), Math.max(0.16, lM-0.14+lift*0.5), 0.96);
-    let tipCol =hsl(hM+6+warm, sM*(0.5+0.45*irid)+honami*0.05, Math.min(0.8, lM+0.08+lift), 0.96);
-    let bladeOp=0.96;
-    // hill grass: haze it toward the pale horizon (desaturate + lighten) with distance, + own opacity
-    if(b.hillHaze){
-      const hz=b.hillHaze;
-      // softer, more muted tone so the fringe reads as cohesive grass texture, not bright spikes;
-      // the honami warmth still passes through but gently
-      const baseS=sM*(0.5+0.2*irid)*(1-hz*0.5);
-      const baseL=Math.max(0.24, (lM-0.04+lift*0.3)*(1-hz*0.55) + 0.58*hz*0.55);
-      rootCol=hsl(hM+warm*0.3, baseS, Math.max(0.2, baseL-0.05), 1);
-      tipCol =hsl(hM+4+warm*0.7, baseS*0.9, Math.min(0.66, baseL+0.05), 1);
-      bladeOp=b.hillOp;
+    const gold = ahead ? reach*1.10 : reach*0.92;        // beauty-poise: leading edge warms most
+    const lift = b.layer*0.12 + gold*0.16;
+    const warm = gold*10;
+    const far = b.layer<0.45;
+    let rootCol=hsl(hM+warm*0.4, sM*(0.55+0.3*irid)*(far?0.85:1), Math.max(0.16,(far?lM+0.06:lM)-0.14+lift*0.5), far?0.62:0.96);
+    let tipCol =hsl(hM+6+warm,   sM*(0.5+0.45*irid)*(far?0.85:1), Math.min(0.8,(far?lM+0.08:lM)+0.08+lift), far?0.62:0.96);
+
+    const edge=clamp01(Math.min(b.xf,1-b.xf)/0.06);
+    const grad=ctx.createLinearGradient(rootX,rootY,tipX,tipY);
+    grad.addColorStop(0, rootCol); grad.addColorStop(1, tipCol);
+    ctx.globalAlpha=edge;
+
+    const hw=b.width*0.5;
+    ctx.beginPath();
+    ctx.moveTo(rootX-hw, rootY);
+    ctx.bezierCurveTo(c1x-hw*0.7, c1y, c2x-hw*0.35, c2y, tipX, tipY);
+    ctx.bezierCurveTo(c2x+hw*0.35, c2y, c1x+hw*0.7, c1y, rootX+hw, rootY);
+    ctx.closePath();
+    ctx.fillStyle=grad; ctx.fill();
+
+    // golden tip-glint travels through the grass with the wave (the beauty moment)
+    const glint = gold*gold*0.9*(0.4+0.6*b.layer);
+    if(glint>0.3){
+      ctx.beginPath(); ctx.arc(tipX,tipY,b.width*(0.8+0.5*gold)*glint,0,TAU);
+      ctx.fillStyle=hsl(46+gold*4,0.6,0.72,0.22*glint*edge); ctx.fill();
     }
-    const grad=g.createLinearGradient(rootX,rootY,tipX,tipY);
-    grad.addColorStop(0, rootCol);
-    grad.addColorStop(1, tipCol);
-    g.globalAlpha=bladeOp;
-
-    const baseHW=b.width*0.5;
-    g.beginPath();
-    g.moveTo(rootX-baseHW, rootY);
-    g.bezierCurveTo(c1x-baseHW*0.7, c1y, c2x-baseHW*0.35, c2y, tipX, tipY);
-    g.bezierCurveTo(c2x+baseHW*0.35, c2y, c1x+baseHW*0.7, c1y, rootX+baseHW, rootY);
-    g.closePath();
-    g.fillStyle=grad; g.fill();
-
-    // golden tip-glint: fires on natural gust crests AND, more strongly, on the honami wave crest —
-    // so a band of gold light travels through the grass with the wave. This is the beauty moment.
-    const glint = Math.max(w.crest*(b.layer>0.5?1:0.4), honami*honami*0.9*(0.4+0.6*b.layer));
-    if(glint>0.32){
-      g.beginPath(); g.arc(tipX,tipY,b.width*(0.8+0.5*honami)*glint,0,Math.PI*2);
-      g.fillStyle=hsl(46+honami*4,0.6,0.72,0.20*glint);
-      g.fill();
-    }
-    g.globalAlpha=1;
-  }
-  // Word-grass layer: blades are now cheap (solid stroke, no per-blade gradient), so we redraw
-  // them live EVERY frame -> the sway is perfectly smooth (no caching judder) and still fast.
-  const grassLayer=document.createElement('canvas'), grassCtx=grassLayer.getContext('2d');
-  let grassFrame=0;
-  function updateGrassLayer(t){
-    if(grassLayer.width!==W || grassLayer.height!==H){ grassLayer.width=W; grassLayer.height=H; }
-    grassCtx.clearRect(0,0,W,H);
-    for(const b of blades) drawBlade(b,t,grassCtx);
-  }
-
-  function drawWord_OLD_REMOVED(){}
-
-  // The word render (base shade + rim-light + sheen) only changes with the slow day phase.
-  // Build it into a cached layer and rebuild ONLY when the phase moves enough — not every frame.
-  let wordBuiltW=0;
-  const wcDusk=document.createElement('canvas'), wcDuskCtx=wcDusk.getContext('2d');
-  // Render the word into one canvas at a given phase (day colour vs dusk colour).
-  function renderWordTo(canvas, cx, phase){
-    if(!glyphImg) return;
-    const {sx,sy}=sunPos();
-    if(canvas.width!==W || canvas.height!==H){ canvas.width=W; canvas.height=H; }
-    cx.globalCompositeOperation='source-over'; cx.globalAlpha=1;
-    cx.clearRect(0,0,W,H);
-    cx.putImageData(glyphImg,0,0);
-    cx.globalCompositeOperation='source-atop';
-    const pal=palette(phase);
-    const dk=phase;
-    const cTop=mix([51,87,74],  pal.ridgeNear, dk*0.7);
-    const cMid=mix([44,77,67],  pal.ridgeNear, dk*0.7);
-    const cBot=mix([40,72,65],  pal.ridgeNear, dk*0.7);
-    const base=cx.createLinearGradient(0,baselineY-fontSize,0,baselineY);
-    base.addColorStop(0, rgbStr(cTop)); base.addColorStop(0.5, rgbStr(cMid)); base.addColorStop(1, rgbStr(cBot));
-    cx.fillStyle=base; cx.fillRect(0,0,W,H);
-    const rim=cx.createRadialGradient(sx,sy,0, sx,sy, Math.min(W,H)*0.95);
-    rim.addColorStop(0.0,'rgba(255,232,188,0.40)');
-    rim.addColorStop(0.30,'rgba(252,210,150,0.24)');
-    rim.addColorStop(0.60,'rgba(240,186,116,0.12)');
-    rim.addColorStop(1.0,'rgba(220,170,100,0)');
-    cx.globalCompositeOperation='lighter';
-    cx.fillStyle=rim; cx.fillRect(0,0,W,H);
-    const sheen=cx.createLinearGradient(W*0.30,0,W*0.72,0);
-    sheen.addColorStop(0.0,'hsla(150,30%,55%,0)');
-    sheen.addColorStop(0.5,'hsla(46,60%,66%,0.16)');
-    sheen.addColorStop(1.0,'hsla(348,30%,60%,0)');
-    cx.globalCompositeOperation='source-atop';
-    cx.fillStyle=sheen; cx.fillRect(0,0,W,H);
-    cx.globalCompositeOperation='source-over';
-  }
-  // Build BOTH the day-coloured and dusk-coloured word once; crossfade them live by phase.
-  function buildWordLayer(){
-    renderWordTo(wc, wctx, 0.0);        // day
-    renderWordTo(wcDusk, wcDuskCtx, 1.0); // dusk
-    wordBuiltW=W;
-  }
-  function drawWord(t){
-    if(!glyphImg)return;
-    if(wordBuiltW!==W) buildWordLayer();          // rebuild only on resize
-    ctx.globalCompositeOperation='source-over';
-    ctx.globalAlpha=1;          ctx.drawImage(wc,0,0);        // day word
-    ctx.globalAlpha=curPhase;   ctx.drawImage(wcDusk,0,0);    // crossfade toward dusk word (smooth)
     ctx.globalAlpha=1;
   }
 
-  // ---------- LOOP ----------
-  let running=true,t0=performance.now(),tNow=0;
-  const prefersReduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  // cache copy elements + a throttle so we only restyle when the phase moves
-  const elTag=document.getElementById('heroTag'),
-        elLift=document.getElementById('heroLift'),
-        elSub=document.getElementById('heroSub');
-  let styledPhase=-1;
-  function styleCopy(ph){
-    if(Math.abs(ph-styledPhase)<0.02) return;
-    styledPhase=ph;
-    // The mid-hills behind the strapline go light->dark over the cycle, passing through a
-    // mid-tone near ph~0.5. To avoid text+background both being mid-tone at once, push the
-    // text colour toward its contrasting EXTREME faster than linear (steep S-curve), and keep
-    // a permanent dual halo (light+dark) so there is always separation.
-    const k = ph<0.5 ? Math.pow(ph/0.5,2)*0.5 : 1-Math.pow((1-ph)/0.5,2)*0.5;  // steep crossover
-    const tag = mix([33,58,48], [245,239,227], k);     // deep teal -> bright cream (fast swap)
-    const sub = mix([58,78,67], [232,226,214], k);
-    const lift= mix([170,120,30],[244,198,116], k);
-    // dual halo: always a little of both, strongest opposite to the text colour
-    const lightHalo=0.30+0.35*(1-k);     // bright halo (helps dark text on light bg, and edges)
-    const darkHalo =0.30+0.40*k;         // dark halo  (helps light text on dark bg)
-    const sh = `0 0 14px rgba(247,242,233,${lightHalo.toFixed(2)}), `
-             + `0 1px 3px rgba(22,28,32,${darkHalo.toFixed(2)}), `
-             + `0 2px 22px rgba(22,28,32,${(darkHalo*0.7).toFixed(2)})`;
-    elTag.style.color=rgbStr(tag);
-    elTag.style.textShadow=sh;
-    elLift.style.color=rgbStr(lift);
-    elSub.style.color=rgbStr(sub);
-    elSub.style.textShadow=sh;
+  function drawGrass(t,gusts){
+    // faint ground
+    ctx.beginPath(); ctx.moveTo(W*0.05,baseY); ctx.lineTo(W*0.95,baseY);
+    ctx.strokeStyle=hsl(150,0.20,0.40,0.14); ctx.lineWidth=Math.max(1,H*0.004); ctx.stroke();
+    for(const b of blades) drawBlade(b,t,gusts);
   }
 
-  // ---------- BACKGROUND: everything drawn LIVE every frame for perfectly smooth colour ----------
-  // With the hill grass gone, the ridges are just a handful of cheap gradient-filled silhouettes,
-  // so we draw them LIVE every frame with continuously-interpolated colour — no cached layer, no
-  // periodic rebuild, and therefore no "stepping". The sky and sun are likewise live. This is the
-  // real fix for the frame-by-frame stutter: nothing heavy is recomputed on a schedule anymore.
-
-  // Adaptive quality: if the device sustains slow frames, drop the internal resolution once.
-  let perfSamples=[], qualityReduced=false;
-  function checkPerf(dt){
-    if(qualityReduced) return;
-    perfSamples.push(dt);
-    if(perfSamples.length>=45){
-      perfSamples.sort((a,b)=>a-b);
-      const med=perfSamples[Math.floor(perfSamples.length/2)];
-      perfSamples=[];
-      if(med>28){
-        qualityReduced=true;
-        const cssW=hero.clientWidth;
-        DPR=Math.max(0.6, DPR*0.7);
-        W=canvas.width=Math.round(cssW*DPR);
-        H=canvas.height=Math.round(Math.max(420, Math.min(cssW*0.56,640))*DPR);
-        canvas.style.width=cssW+'px';
-        buildRidges(); buildWordField(); buildSun(); buildFogTile();
-        wordBuiltW=0;
-      }
-    }
-  }
-
+  // ---- frame ----
+  let t0=performance.now(), tNow=0, running=!prefersReduce;
   function frame(now){
-    const dt = now - (frame._last||now); frame._last=now;
+    if(frame._paused){ return; }                 // off-screen: stop this loop (restarted by observer)
+    const cw=hero.clientWidth;
+    if(cw>0 && Math.abs(canvas.width/DPR - cw)>1) build();
+    const dt=now-(frame._last||now); frame._last=now;
     if(running) tNow=(now-t0)/1000;
-    curPhase=dayPhase(tNow);                     // advance the slow descent into twilight
-    styleCopy(curPhase);                         // keep hero text legible across the day cycle
-    const slowFrame = dt>26;
-    drawTarget=ctx;
-    ctx.globalCompositeOperation='source-over'; ctx.globalAlpha=1;
-    drawSky(0);                                   // 1. sky — live, continuous colour
-    drawSunLive();                                // 2. sun — live position + crossfade colour
-    for(let i=ridges.length-1;i>=0;i--) drawRidge(ridges[i], tNow);  // 3. hills — LIVE (far->near)
-    for(const hb of hillBlades) drawBlade(hb,tNow); // 3b. flowing grass on the two front hills
-    drawMist(tNow);                               // 4. rolling fog in the valley (drifts over roots)
-    drawWord(tNow);                               // 5. the word (day<->dusk crossfade)
-    for(const b of blades) drawBlade(b,tNow);     // 6. word-grass — long, flowing, live
-    if(soundOn) updateSound();
+    const gusts=computeGusts(tNow);
+    ctx.clearRect(0,0,W,H);
+    drawWord(tNow,gusts);
+    drawGrass(tNow,gusts);
     if(running) checkPerf(dt);
     requestAnimationFrame(frame);
   }
+  let perf=[], reduced=false;
+  function checkPerf(dt){ if(reduced) return; perf.push(dt);
+    if(perf.length>=45){ perf.sort((a,b)=>a-b); const med=perf[22]; perf=[];
+      if(med>32){ reduced=true; DPR=Math.max(0.7,DPR*0.72); build(); } } }
 
-  // ---------- SOUND (triple-click, same as v2) ----------
-  let audioCtx=null,noiseSrc=null,filter=null,gainNode=null,soundOn=false,lfo={};
-  function makeNoise(ac){const len=ac.sampleRate*2,buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
-    let b0=0,b1=0,b2=0;for(let i=0;i<len;i++){const wn=Math.random()*2-1;
-      b0=0.99765*b0+wn*0.0990460;b1=0.96300*b1+wn*0.2965164;b2=0.57000*b2+wn*1.0526913;
-      d[i]=(b0+b1+b2+wn*0.1848)*0.06;}return buf;}
-  function startSound(){if(soundOn)return;
-    audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();
-    if(audioCtx.state==='suspended')audioCtx.resume();
-    noiseSrc=audioCtx.createBufferSource();noiseSrc.buffer=makeNoise(audioCtx);noiseSrc.loop=true;
-    filter=audioCtx.createBiquadFilter();filter.type='bandpass';filter.frequency.value=520;filter.Q.value=0.7;
-    const lp=audioCtx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1400;lp.Q.value=0.3;
-    gainNode=audioCtx.createGain();gainNode.gain.value=0;
-    noiseSrc.connect(filter);filter.connect(lp);lp.connect(gainNode);gainNode.connect(audioCtx.destination);
-    noiseSrc.start();soundOn=true;lfo.t0=performance.now();
-    clearTimeout(lfo.timer);lfo.timer=setTimeout(stopSound,BREATH*1000*1.6);
-    {const r=document.getElementById('reading');if(r)r.textContent='listening to the gust…';}}
-  function updateSound(){if(!soundOn||!audioCtx)return;const w=wind(W/2,tNow,0,Omega0);
-    const now=audioCtx.currentTime;
-    gainNode.gain.setTargetAtTime(0.0006+0.05*Math.pow(w.env,1.4),now,0.08);
-    filter.frequency.setTargetAtTime(320+520*w.env,now,0.10);}
-  function stopSound(){if(!soundOn)return;const now=audioCtx.currentTime;
-    gainNode.gain.setTargetAtTime(0.0001,now,0.25);
-    setTimeout(()=>{try{noiseSrc.stop();}catch(e){}soundOn=false;
-      {const r=document.getElementById('reading');if(r)r.textContent='SO(2) · \u03A9 = 1/2\u03C0';}},700);}
+  let _lw=0;
+  function onResize(){ const w=hero.clientWidth; if(Math.abs(w-_lw)<1) return; _lw=w; build(); }
+  if('ResizeObserver' in window){ let r; const ro=new ResizeObserver(()=>{ cancelAnimationFrame(r); r=requestAnimationFrame(onResize); }); ro.observe(hero); }
+  else window.addEventListener('resize',build);
 
-  let clicks=0,ct=null;
-  canvas.addEventListener('click',()=>{clicks++;clearTimeout(ct);ct=setTimeout(()=>clicks=0,600);
-    if(clicks>=3){clicks=0;soundOn?stopSound():startSound();}});
+  if('IntersectionObserver' in window){
+    const io=new IntersectionObserver(es=>{ for(const e of es){
+      if(e.isIntersecting){ if(frame._paused){ frame._paused=false; t0=performance.now()-tNow*1000; frame._last=performance.now(); requestAnimationFrame(frame); } }
+      else frame._paused=true; } },{rootMargin:'40px'});
+    io.observe(hero);
+  }
 
-  const toggle=document.getElementById('toggle');
-  if(toggle){ toggle.addEventListener('click',(e)=>{e.stopPropagation();running=!running;
-    if(running)t0=performance.now()-tNow*1000;
-    toggle.textContent=running?'pause the wind':'release the wind';}); }
 
-  // Resize handling: instead of trying to rebuild the canvas coordinate system seamlessly mid-drag
-  // (which causes the grass to drift, because the whole field is regenerated from the new dimensions),
-  // we simply reload the page once the resize SETTLES. On reload, build() runs a single time at the
-  // final size and everything is correct. This trades a brief flash for guaranteed stability.
-  //
-  // Notes:
-  //  - Only WIDTH changes trigger it. Height-only changes (mobile browser chrome showing/hiding, the
-  //    address bar collapsing on scroll) must NOT reload, or mobile scrolling would reload constantly.
-  //  - Debounced: we wait for the drag to stop before reloading, so it happens once, not every frame.
-  //  - A small threshold ignores trivial 1–2px jitters.
-  const _initialW = window.innerWidth;
-  let _reloadTimer;
-  window.addEventListener('resize', ()=>{
-    if(Math.abs(window.innerWidth - _initialW) < 4) return;   // width essentially unchanged → ignore
-    clearTimeout(_reloadTimer);
-    _reloadTimer = setTimeout(()=>{
-      if(Math.abs(window.innerWidth - _initialW) >= 4){
-        window.location.reload();
-      }
-    }, 350);                                                  // reload once the drag settles
-  });
 
-  function start(){build();
-    curPhase=dayPhase(0);
-    if(prefersReduce){running=false;if(toggle)toggle.textContent='release the wind';tNow=BREATH*0.55;}
-    requestAnimationFrame(frame);}
-  if(document.fonts&&document.fonts.ready){
+  function start(){ build();
+    if(prefersReduce){ running=false; tNow=(0.5/NG)/GS; }
+    requestAnimationFrame(frame); }
+  if(document.fonts && document.fonts.load){
     document.fonts.load('400 60px Fraunces').then(()=>document.fonts.ready).then(start).catch(start);
-    setTimeout(()=>{if(!blades.length)start();},1200);
-  }else{window.addEventListener('load',start);}
+    setTimeout(()=>{ if(!W) start(); },1200);
+  } else window.addEventListener('load',start);
+
+  document.querySelectorAll('a[href^="#"]').forEach(a=>{ a.addEventListener('click',e=>{
+    const id=a.getAttribute('href'); if(id.length<2) return; const el=document.querySelector(id); if(!el) return;
+    e.preventDefault(); const navH=document.querySelector('.topbar').offsetHeight;
+    window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-navH-8,behavior:'smooth'}); }); });
 })();
 </script>
+
 <script>
-  // smooth in-page scrolling that accounts for the sticky nav height
-  document.querySelectorAll('a[href^="#"]').forEach(a=>{
-    a.addEventListener('click',e=>{
-      const id=a.getAttribute('href'); if(id.length<2) return;
-      const el=document.querySelector(id); if(!el) return;
-      e.preventDefault();
-      const navH=document.querySelector('.topbar').offsetHeight;
-      const y=el.getBoundingClientRect().top+window.pageYOffset-navH-8;
-      window.scrollTo({top:y,behavior:'smooth'});
-    });
-  });
+/* Footer grass — the same meadow as the header, as a calm band rooting the wordmark.
+   Same blade construction (closed bezier, curl in the upper third, vertical
+   foreshorten on bend, per-blade variation, depth layers) and the same one-way
+   honami wind (a procession of gusts drifting across, never reversing, with a gold
+   tip-glint at the crest). No word, no reaching — just a living horizon at the foot. */
+(function(){
+  const PI=Math.PI, TAU=PI*2, SQRT2=Math.SQRT2;
+  const RAF=window.requestAnimationFrame.bind(window);   // private, immune to any global override
+  const foot=document.querySelector('footer.foot');
+  const canvas=document.getElementById('footgrass');
+  if(!foot||!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lerp=(a,b,t)=>a+(b-a)*t, clamp01=v=>v<0?0:v>1?1:v, smooth=t=>t*t*(3-2*t);
+  const hsl=(h,s,l,a=1)=>`hsla(${h.toFixed(1)},${(s*100).toFixed(1)}%,${(l*100).toFixed(1)}%,${a})`;
+  let _seed=20260624; const rnd=()=>{ _seed=(_seed*1664525+1013904223)>>>0; return _seed/4294967296; };
+
+  let DPR=Math.min(window.devicePixelRatio||1,2);
+  let W=0,H=0, baseY=0, blades=[];
+
+  // one-way wind (a gentle procession of gusts that only ever drift one direction)
+  const NG=2, GS=0.05, SIGF=0.06, LAMB=0.17, EDGE=0.2;
+  const gustC=(i,t)=>((t*GS+i/NG)%1+1)%1;
+  const gustW=c=>smooth(clamp01(c/EDGE))*smooth(clamp01((1-c)/EDGE));
+  function reachAt(xf,t){
+    let r=0,dom=0,ahead=false;
+    for(let i=0;i<NG;i++){ const c=gustC(i,t), w=gustW(c); if(w<0.01) continue;
+      const d=xf-c, eF=(d>0)?Math.exp(-0.5*(d/SIGF)*(d/SIGF)):Math.exp(-Math.abs(d)/LAMB);
+      const e=w*eF; r=r+e-r*e; if(e>dom){dom=e;ahead=d>0;} }
+    return {reach:clamp01(r),ahead};
+  }
+  const hueAt=p=>{ const h=150+26*Math.sin(p*TAU), s=0.42+0.12*Math.sin(p*TAU+1.2), l=0.40+0.06*Math.sin(p*TAU+2.1); return [h,s,l]; };
+
+  function build(){
+    W=foot.clientWidth; H=canvas.clientHeight||120;
+    if(W<=0){ return; }
+    canvas.width=Math.round(W*DPR); canvas.height=Math.round(H*DPR);
+    ctx.setTransform(DPR,0,0,DPR,0,0);
+    baseY=H+1;                                  // roots at the very bottom edge
+    _seed=20260624; blades=[];
+    const reachMax=H*0.96, hMin=H*0.55;         // tall enough to fill the band
+    const step=Math.max(2,Math.round(W/360));   // denser
+    for(let x=0;x<W;x+=step){
+      const xf=x/W;
+      const clump=0.5+0.5*Math.sin(x*0.045+0.6)*Math.sin(x*0.018+1.1);
+      const n=1+(rnd()<clump*0.9?1:0);
+      for(let k=0;k<n;k++){
+        const spread=(k===0?0:(rnd()-0.5)*step*2.4), r=rnd();
+        const tall=r<0.3?1.7:(r<0.65?1.2:0.85);
+        const lenRest=hMin*(0.6+rnd()*0.55)*tall;
+        blades.push({ x:x+spread+(rnd()-0.5)*step*0.5, xf, rootY:baseY+(rnd()*2.0),
+          lenRest, reachAdd:(reachMax-hMin)*(0.55+0.5*rnd()), layer:rnd(), jitter:rnd()-0.5,
+          width:Math.max(1.0,(1.3+rnd()*1.0))*(0.7+0.5*tall/1.7), ph0:(rnd()-0.5)*0.5,
+          bendBias:(rnd()-0.5)*0.4, curl:(rnd()*0.5+0.6), flutter:(rnd()*0.5+0.5) });
+      }
+    }
+    blades.sort((a,b)=>(a.layer-b.layer)||(a.x-b.x));
+  }
+
+  function drawBlade(b,t){
+    const {reach,ahead}=reachAt(b.xf,t);
+    const len=b.lenRest + b.reachAdd*reach*0.5;          // calmer than the header
+    const ripple=Math.sin(t*0.9+b.ph0*6+b.xf*7.0)*0.16*b.flutter;
+    const waveBend=reach*0.8;
+    const bend=(b.bendBias+ripple+waveBend)*b.curl;
+    const tipDX=bend*len*0.85, tipDY=-len-Math.abs(bend)*len*0.18;
+    const rootX=b.x, rootY=b.rootY;
+    const c1x=rootX+tipDX*0.10, c1y=rootY-len*0.42, c2x=rootX+tipDX*0.62, c2y=rootY-len*0.82;
+    const tipX=rootX+tipDX, tipY=rootY+tipDY;
+    const irid=0.35+0.55*reach;
+    const [hM,sM,lM]=hueAt((b.xf*1.3+t*0.05)+b.ph0*0.4+(0.06/SQRT2)*irid);
+    const gold=ahead?reach*1.10:reach*0.92;
+    const lift=b.layer*0.10+gold*0.16, warm=gold*10, far=b.layer<0.45;
+    // deeper greens than the header field so the band reads on warm paper
+    const rootCol=hsl(hM+warm*0.4, sM*(0.6+0.3*irid)*(far?0.9:1), Math.max(0.14,(far?lM-0.04:lM-0.10)-0.06+lift*0.4), far?0.8:0.97);
+    const tipCol =hsl(hM+6+warm,   sM*(0.55+0.4*irid)*(far?0.9:1), Math.min(0.62,(far?lM:lM+0.04)+0.02+lift), far?0.8:0.97);
+    const edge=clamp01(Math.min(b.xf,1-b.xf)/0.05);
+    const grad=ctx.createLinearGradient(rootX,rootY,tipX,tipY);
+    grad.addColorStop(0,rootCol); grad.addColorStop(1,tipCol);
+    ctx.globalAlpha=edge;
+    const hw=b.width*0.5;
+    ctx.beginPath();
+    ctx.moveTo(rootX-hw,rootY);
+    ctx.bezierCurveTo(c1x-hw*0.7,c1y,c2x-hw*0.35,c2y,tipX,tipY);
+    ctx.bezierCurveTo(c2x+hw*0.35,c2y,c1x+hw*0.7,c1y,rootX+hw,rootY);
+    ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+    const glint=gold*gold*0.9*(0.4+0.6*b.layer);
+    if(glint>0.3){ ctx.beginPath(); ctx.arc(tipX,tipY,b.width*(0.8+0.5*gold)*glint,0,TAU);
+      ctx.fillStyle=hsl(46+gold*4,0.6,0.72,0.22*glint*edge); ctx.fill(); }
+    ctx.globalAlpha=1;
+  }
+
+  let t0=performance.now(), tNow=0, prefRM=prefersReduce, lastW=0;
+  function rebuildIfNeeded(){
+    const w=foot.clientWidth;
+    if(w>0 && (Math.abs(w-lastW)>1 || canvas.width===0)){ lastW=w; build(); return true; }
+    return false;
+  }
+  // ONE perpetual loop. It never cancels itself — it simply skips drawing when the
+  // footer is off-screen or not yet laid out, and always re-requests. No pause/visible
+  // flags to get out of sync, so it can't die.
+  function loop(now){
+    RAF(loop);
+    if(W<=0){ rebuildIfNeeded(); return; }                 // wait until laid out
+    // cheap visibility check: is the footer anywhere near the viewport?
+    const rect=foot.getBoundingClientRect();
+    const onscreen = rect.bottom>-120 && rect.top<(window.innerHeight||document.documentElement.clientHeight)+120;
+    if(!onscreen) return;                                   // idle (still re-requesting)
+    if(!prefRM) tNow=(now-t0)/1000;
+    ctx.clearRect(0,0,W,H);
+    // soft earth line at the base so the band reads as grounded
+    const eg=ctx.createLinearGradient(0,H-14,0,H);
+    eg.addColorStop(0,'rgba(45,66,52,0)'); eg.addColorStop(1,'rgba(34,52,42,0.28)');
+    ctx.fillStyle=eg; ctx.fillRect(0,H-14,W,14);
+    for(const b of blades) drawBlade(b,tNow);
+  }
+  if('ResizeObserver' in window){ let r; new ResizeObserver(()=>{ cancelAnimationFrame(r); r=RAF(rebuildIfNeeded); }).observe(foot); }
+  else window.addEventListener('resize',rebuildIfNeeded);
+  function start(){
+    build(); lastW=foot.clientWidth;
+    if(prefRM) tNow=(0.5/NG)/GS;
+    RAF(loop);
+  }
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(start).catch(start); else window.addEventListener('load',start);
+  // safety nets in case layout settles after fonts/observers
+  setTimeout(()=>{ if(W<=0){ build(); lastW=foot.clientWidth; } }, 400);
+  setTimeout(()=>{ if(W<=0){ build(); lastW=foot.clientWidth; } }, 1400);
+})();
 </script>
 </body>
 </html>
