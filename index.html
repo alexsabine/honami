@@ -138,7 +138,18 @@
     max-width:min(94vw,52rem); margin-left:auto; margin-right:auto;
     text-shadow:0 1px 12px rgba(244,238,228,0.6); }
   .hero-copy .sub .em{ color:#274236; }
-  @media (max-width:760px){ .hero-copy{ top:64%; } .hero-copy .sub{ letter-spacing:.03em; } }
+  @media (max-width:760px){
+    /* On phones, don't overlay the text on the canvas — stack it BELOW so the
+       wrapped strapline + sub-line always have room and never clip or overlap.
+       The grass sits in the upper part of the canvas, so pull the copy up under
+       it (the lower canvas strip is just background) to avoid a big gap. */
+    header.hero{ overflow:visible; padding-bottom:1.6rem; }
+    header.hero canvas{ aspect-ratio:1 / 0.5; margin-bottom:-20vw; }
+    .hero-copy{ position:static; top:auto; bottom:auto; margin-top:0; padding:0 1.3rem; }
+    .hero-copy .tag{ font-size:clamp(1.7rem,8vw,2.4rem); text-shadow:none; }
+    .hero-copy .sub{ letter-spacing:.03em; max-width:34rem; text-shadow:none;
+      font-size:clamp(.95rem,4vw,1.15rem); margin-top:.6rem; }
+  }
 
   main{ margin:0 auto; padding:clamp(3rem,9vh,6rem) 0 6rem; }
   main .lead{ font-family:"Fraunces",serif; font-weight:500; font-size:clamp(1.85rem,4.2vw,2.7rem);
