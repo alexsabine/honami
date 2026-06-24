@@ -307,6 +307,18 @@
     font-size:clamp(1.05rem,1.5vw,1.2rem); line-height:1.5; color:var(--ink);
     letter-spacing:.004em; }
   .voice blockquote .markq{ color:var(--gold-soft); font-weight:600; }
+  /* playful WhatsApp-style aside under a quote */
+  .wabubble{ position:relative; margin-top:1.1rem; align-self:flex-start;
+    max-width:24rem; background:#dcf8c6; color:#111b21; border-radius:10px;
+    padding:.5rem .7rem .95rem .7rem; font-family:"Inter",system-ui,sans-serif;
+    font-size:.9rem; line-height:1.4; font-weight:400; letter-spacing:0;
+    box-shadow:0 1px 1px rgba(0,0,0,.12); }
+  .wabubble::after{ content:""; position:absolute; top:0; right:-7px;
+    width:0; height:0; border:7px solid transparent;
+    border-top-color:#dcf8c6; border-right:0; }
+  .wabubble .time{ position:absolute; right:.6rem; bottom:.32rem;
+    font-size:.62rem; color:#667781; letter-spacing:0; display:flex; align-items:center; gap:.18rem; }
+  .wabubble .tick{ color:#53bdeb; font-size:.7rem; line-height:1; }
   .voice .attr{ margin-top:1.2rem; }
   .voice .attr .who{ font-family:"Inter",sans-serif; font-weight:600;
     font-size:.92rem; color:var(--ink); }
@@ -503,6 +515,7 @@
       <div class="voices">
         <figure class="voice">
           <blockquote><span class="markq">&ldquo;</span>He holds many minds and many disciplines at once, finds the pattern moving through all of them, and builds the thing that lets everyone else see it too.<span class="markq">&rdquo;</span></blockquote>
+          <div class="wabubble">He is a lion 🦁 and a chicken 🐔 and a lovely man at the same time!<span class="time">23:14<span class="tick">&#10003;&#10003;</span></span></div>
           <figcaption class="attr">
             <div class="who">Yen Chen</div>
             <div class="role">Founder &amp; Executive Director, Space Zero</div>
