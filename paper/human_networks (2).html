@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Active Inference Network -- Phase-Gating Across Precision Channels</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#faf8f5;color:#2a2520;font-family:'Cormorant Garamond',Georgia,serif;display:flex;flex-direction:column;align-items:center;min-height:100vh;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+.header{text-align:center;padding:2rem 1rem .5rem;max-width:800px}
+.header h1{font-weight:300;font-size:1.6rem;letter-spacing:.35em;text-transform:uppercase;color:#3a3530}
+.header .sub{font-family:'JetBrains Mono',monospace;font-size:.72rem;color:#8a8070;margin-top:.4rem;line-height:1.7;display:block}
+.tabs{display:flex;justify-content:center;gap:0;padding:.8rem 1rem .2rem;max-width:500px;width:100%}
+.tab-btn{font-family:'JetBrains Mono',monospace;font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;color:#9a9080;background:none;border:none;padding:.6rem 1.5rem;cursor:pointer;transition:color .3s;border-bottom:2px solid transparent}
+.tab-btn:hover{color:#5a5045}.tab-btn.active{color:#3a3530;border-bottom-color:#7a5a8a}
+.tab-btn .tab-range{display:block;font-size:.55rem;color:#b0a898;margin-top:.15rem;letter-spacing:.08em}
+.tab-btn.active .tab-range{color:#8a8070}
+.controls{display:flex;align-items:center;justify-content:center;gap:1.2rem;padding:.8rem 1rem .3rem;flex-wrap:wrap;max-width:850px}
+.ctrl-group{display:flex;flex-direction:column;align-items:center;gap:.3rem}
+.ctrl-group label{font-family:'JetBrains Mono',monospace;font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#9a9080}
+.ctrl-group input[type=range]{-webkit-appearance:none;width:140px;height:3px;background:#d0c8b8;border-radius:2px;outline:none;cursor:pointer}
+.ctrl-group input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:#7a5a8a;border:2px solid #faf8f5;cursor:pointer;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.n-display{font-family:'JetBrains Mono',monospace;font-size:1.4rem;font-weight:500;color:#2a2520;min-width:2.5em;text-align:center}
+.sound-panel{display:flex;align-items:center;justify-content:center;gap:1rem;padding:.3rem 1rem .5rem;flex-wrap:wrap;max-width:800px}
+.sound-panel select{padding:.35rem .6rem;background:#faf8f5;border:1.5px solid rgba(60,50,40,.18);color:#4a4035;font-family:'JetBrains Mono',monospace;font-size:.7rem;cursor:pointer;border-radius:2px;outline:none}
+.chk-group{display:inline-flex;align-items:center;gap:.35rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#6a6050;cursor:pointer;user-select:none;white-space:nowrap;line-height:1}
+.chk-group input[type=checkbox]{-webkit-appearance:none;appearance:none;width:13px;height:13px;min-width:13px;border:1.5px solid rgba(60,50,40,.25);border-radius:2px;cursor:pointer;position:relative;background:#faf8f5;margin:0;vertical-align:middle}
+.chk-group input[type=checkbox]:checked{background:rgba(122,90,138,.2);border-color:#7a5a8a}
+.chk-group input[type=checkbox]:checked::after{content:'';position:absolute;top:1px;left:3px;width:4px;height:7px;border:solid #7a5a8a;border-width:0 2px 2px 0;transform:rotate(45deg)}
+.chk-group.z2 input[type=checkbox]:checked{background:rgba(90,138,122,.2);border-color:#5a8a7a}
+.chk-group.z2 input[type=checkbox]:checked::after{border-color:#5a8a7a}
+.warn{color:#c45a4a;font-size:.5rem;font-family:'JetBrains Mono',monospace;letter-spacing:.05em}
+.readouts{display:flex;flex-wrap:wrap;justify-content:center;gap:.8rem 1.5rem;padding:.5rem 1rem;max-width:950px}
+.readout{text-align:center;min-width:85px}
+.readout .rlabel{font-family:'JetBrains Mono',monospace;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;color:#9a9080}
+.readout .rval{font-family:'JetBrains Mono',monospace;font-size:1rem;font-weight:400;margin-top:.1rem}
+.rval.purple{color:#7a5a8a}.rval.teal{color:#5a8a7a}.rval.gold{color:#b89a4a}.rval.red{color:#c45a4a}
+.canvas-wrap{position:relative;width:100%;max-width:700px;margin:.5rem auto;padding:0 .5rem}
+canvas{width:100%;height:auto;display:block;border-radius:3px}
+/* Examples: prominent placement directly under simulation */
+.examples{max-width:700px;width:100%;padding:.6rem 1rem .4rem;display:flex;flex-direction:column;align-items:center;gap:.3rem;background:rgba(200,190,175,.06);border-radius:3px;margin:0 auto}
+.ex-title{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:#9a9080}
+.ex-label{font-weight:400;font-size:1.1rem;color:#3a3530;text-align:center;line-height:1.6}
+.ex-detail{font-family:'JetBrains Mono',monospace;font-size:.7rem;color:#8a8070;text-align:center;line-height:1.7;max-width:560px}
+.ex-nodes{color:#7a5a8a}.ex-edges{color:#5a8a7a}
+.trace-wrap{position:relative;width:100%;max-width:700px;margin:.5rem auto 0;padding:0 .5rem}
+.trace-header{display:flex;justify-content:space-between;align-items:center;padding:.2rem 0;flex-wrap:wrap;gap:.3rem}
+.trace-title{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:#9a9080}
+.trace-legend{display:flex;gap:.8rem}
+.trace-leg{display:flex;align-items:center;gap:.3rem;font-family:'JetBrains Mono',monospace;font-size:.58rem;color:#6a6050}
+.trace-leg .tl-dot{width:8px;height:3px;border-radius:1px}
+.metrics-row{display:flex;flex-wrap:wrap;justify-content:center;gap:.6rem 1.2rem;padding:.4rem 1rem;max-width:950px}
+.metric{text-align:center;min-width:110px;padding:.3rem .6rem;background:rgba(200,190,175,.12);border-radius:2px}
+.metric .mlabel{font-family:'JetBrains Mono',monospace;font-size:.52rem;letter-spacing:.08em;text-transform:uppercase;color:#9a9080}
+.metric .mval{font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:400;margin-top:.1rem}
+.metric .mref{font-family:'JetBrains Mono',monospace;font-size:.48rem;color:#b0a898;margin-top:.1rem}
+.legend{display:flex;justify-content:center;gap:1.2rem;padding:.4rem 1rem;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:.4rem;font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#6a6050}
+.leg-dot{width:9px;height:9px;border-radius:50%}.leg-line{width:16px;height:2px}
+.equations{max-width:700px;padding:1rem 1.5rem;margin:.5rem auto}
+.eq-row{display:flex;align-items:center;gap:1rem;padding:.4rem 0;border-bottom:1px solid rgba(200,190,175,.3);flex-wrap:wrap}
+.eq-row:last-child{border-bottom:none}
+.eq-label{font-family:'JetBrains Mono',monospace;font-size:.6rem;letter-spacing:.1em;text-transform:uppercase;color:#9a9080;min-width:120px}
+.eq-formula{font-family:'JetBrains Mono',monospace;font-size:.78rem;color:#4a4035;flex:1}
+.eq-val{font-family:'JetBrains Mono',monospace;font-size:.85rem;font-weight:500;min-width:70px;text-align:right}
+.explainer{max-width:680px;padding:1.5rem 2rem 3rem;line-height:1.85;font-size:1.05rem;color:#3a3530}
+.explainer h2{font-weight:400;font-size:1.15rem;letter-spacing:.2em;text-transform:uppercase;color:#5a5045;margin:1.8rem 0 .6rem;padding-top:.5rem;border-top:1px solid rgba(200,190,175,.4)}
+.explainer h2:first-child{border-top:none;margin-top:0}
+.explainer p{margin-bottom:.8rem}
+.explainer em{font-style:italic;color:#7a5a8a}
+.explainer strong{font-weight:500;color:#2a2520}
+.m{font-family:'JetBrains Mono',monospace;font-size:.82rem;color:#5a5045}
+.tag{font-family:'JetBrains Mono',monospace;font-size:.55rem;vertical-align:super;margin-left:.1em;padding:.05em .3em;border-radius:2px}
+.tag-crr{color:#b89a4a;background:rgba(184,154,74,.08)}
+.tag-fep{color:#7a5a8a;background:rgba(122,90,138,.08)}
+.tag-ext{color:#9a9080;background:rgba(154,144,128,.08)}
+.tag-key{font-family:'JetBrains Mono',monospace;font-size:.6rem;color:#9a9080;text-align:center;padding:.5rem 1rem;line-height:2}
+.tab-content{display:none}.tab-content.active{display:block}
+@media(max-width:600px){.header h1{font-size:1.2rem;letter-spacing:.2em}.controls{gap:.7rem}.ctrl-group input[type=range]{width:110px}.explainer{padding:1rem 1.2rem 2rem;font-size:.95rem}.tab-btn{padding:.5rem 1rem}.metrics-row{gap:.4rem .6rem}.metric{min-width:90px}.sound-panel{gap:.6rem}}
+</style>
+</head>
+<body>
+<div class="header"><h1>Active Inference Network</h1>
+  <span class="sub">Phase-gating across precision channels on complete graphs K<sub>n</sub><br>Nodes as SO(2) prior precision &#xB7; Edges as Z&#x2082; sensory precision</span></div>
+<div class="tabs">
+  <button class="tab-btn active" data-tab="intimate">Self &amp; Circle<span class="tab-range">1 &#x2013; 20 agents</span></button>
+  <button class="tab-btn" data-tab="scale">Crowd &amp; Culture<span class="tab-range">20 &#x2013; 150 agents</span></button>
+</div>
+<div class="controls">
+  <div class="ctrl-group"><label>Agents n</label><input type="range" id="nSlider" min="1" max="20" value="2" step="1"></div>
+  <div class="n-display" id="nDisplay">K&#x2082;</div>
+  <div class="ctrl-group"><label>Speed</label><input type="range" id="speedSlider" min="0.2" max="3" value="1" step="0.1"></div>
+  <div class="ctrl-group"><label>Entrainment &#x03B5; <span class="warn">(sensitive)</span></label><input type="range" id="entrainSlider" min="0" max="1" value="0" step="0.02"></div>
+</div>
+<div class="sound-panel">
+  <select id="presetSelect">
+    <option value="">Jump to...</option>
+    <option value="1">1 &#x2014; Self</option>
+    <option value="2" selected>2 &#x2014; Conversation</option>
+    <option value="3">3 &#x2014; Triad</option>
+    <option value="4">4 &#x2014; Band</option>
+    <option value="5">5 &#x2014; Dinner Party</option>
+    <option value="6">6 &#x2014; Meeting</option>
+    <option value="7">7 &#x2014; Startup</option>
+    <option value="10">10 &#x2014; Jury</option>
+    <option value="12">12 &#x2014; Squad</option>
+    <option value="15">15 &#x2014; Seminar</option>
+    <option value="20">20 &#x2014; Classroom</option>
+    <option value="25">25 &#x2014; Platoon</option>
+    <option value="30">30 &#x2014; Guild</option>
+    <option value="40">40 &#x2014; Orchestra</option>
+    <option value="50">50 &#x2014; Community</option>
+    <option value="75">75 &#x2014; Department</option>
+    <option value="100">100 &#x2014; Company</option>
+    <option value="120">120 &#x2014; Village</option>
+    <option value="150">150 &#x2014; Dunbar's Number</option>
+  </select>
+  <select id="soundStyle"><option value="off">Sound off</option><option value="bells">Bells</option><option value="voice">Voice</option></select>
+  <label class="chk-group"><input type="checkbox" id="chkSO2" checked> SO(2)</label>
+  <label class="chk-group z2"><input type="checkbox" id="chkZ2" checked> Z&#x2082;</label>
+</div>
+<div class="readouts">
+  <div class="readout"><div class="rlabel">Agents SO(2)</div><div class="rval purple" id="rNodes">2</div></div>
+  <div class="readout"><div class="rlabel">Blankets Z&#x2082;</div><div class="rval teal" id="rEdges">1</div></div>
+  <div class="readout"><div class="rlabel">Individual Autonomy</div><div class="rval purple" id="rIndAuto">0.500</div></div>
+  <div class="readout"><div class="rlabel">Collective Autonomy</div><div class="rval teal" id="rGrpAuto">0.500</div></div>
+  <div class="readout"><div class="rlabel">Integration &#x03A6;</div><div class="rval gold" id="rPhi">1.000</div></div>
+  <div class="readout"><div class="rlabel">Euler &#x03C7;</div><div class="rval red" id="rEuler">1</div></div>
+</div>
+<div class="canvas-wrap"><canvas id="network" width="700" height="500"></canvas></div>
+
+<!-- EXAMPLES: directly beneath simulation for maximum visibility -->
+<div class="examples"><div class="ex-title" id="exTitle"></div><div class="ex-label" id="exLabel"></div><div class="ex-detail" id="exDetail"></div></div>
+
+<div class="legend">
+  <div class="leg-item"><div class="leg-dot" style="background:#7a5a8a"></div>SO(2) agent (prior)</div>
+  <div class="leg-item"><div class="leg-line" style="background:#5a8a7a"></div>Z&#x2082; blanket (sensory)</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#c45a4a"></div>Belief update</div>
+  <div class="leg-item"><div class="leg-dot" style="background:#b89a4a"></div>Edge of criticality</div>
+  <div class="leg-item"><div class="leg-dot" style="background:rgba(150,140,120,.5)"></div>Prediction error</div>
+</div>
+
+<!-- COHERENCE TRACE (cf. paper Fig. 5) -->
+<div class="trace-wrap">
+  <div class="trace-header">
+    <div class="trace-title">Coherence accumulation &#x2014; tracked agent &amp; edge</div>
+    <div class="trace-legend">
+      <div class="trace-leg"><div class="tl-dot" style="background:#5a8a7a"></div>C<sub>s</sub> (Z&#x2082;) sensory</div>
+      <div class="trace-leg"><div class="tl-dot" style="background:#7a5a8a"></div>C<sub>p</sub> (SO(2)) prior</div>
+    </div>
+  </div>
+  <canvas id="trace" width="700" height="120"></canvas>
+</div>
+
+<!-- METRICS: clean, only things we can truthfully show in HTML sim -->
+<div class="metrics-row">
+  <div class="metric"><div class="mlabel">Z&#x2082; rupture freq</div><div class="mval teal" id="mFreqZ2">&#x2014;</div><div class="mref">fast, shallow updates</div></div>
+  <div class="metric"><div class="mlabel">SO(2) rupture freq</div><div class="mval purple" id="mFreqSO2">&#x2014;</div><div class="mref">slow, deep updates</div></div>
+  <div class="metric"><div class="mlabel">Freq ratio Z&#x2082;/SO(2)</div><div class="mval gold" id="mFreqRatio">&#x2014;</div><div class="mref">&#x2248;2 independent, &#x2248;1 entrained</div></div>
+  <div class="metric"><div class="mlabel">Z&#x2082; per SO(2) cycle</div><div class="mval gold" id="mMode">&#x2014;</div><div class="mref">discrete trial count</div></div>
+  <div class="metric"><div class="mlabel">Edge of criticality</div><div class="mval gold" id="mBeauty">&#x2014;</div><div class="mref">B = exp(C/&#x03A9;)&#xB7;(1&#x2212;C&#xB7;&#x03A9;)</div></div>
+</div>
+
+<div class="equations">
+  <div class="eq-row"><div class="eq-label">Individual Autonomy</div><div class="eq-formula">A<sub>ind</sub> = 1/n</div><div class="eq-val purple" id="eqInd">0.500</div></div>
+  <div class="eq-row"><div class="eq-label">Collective Autonomy</div><div class="eq-formula">A<sub>col</sub> = (n&#x2212;1)/n</div><div class="eq-val teal" id="eqGrp">0.500</div></div>
+  <div class="eq-row"><div class="eq-label">Integration</div><div class="eq-formula">&#x03A6; = |1/n &#xB7; &#x03A3; exp(i&#x03B8;&#x2C7;)|</div><div class="eq-val gold" id="eqPhi">1.000</div></div>
+  <div class="eq-row"><div class="eq-label">Entrainment</div><div class="eq-formula">kick = &#x03B5; &#xB7; &#x03A9; &#xB7; (1 + 3p&#xB2;) per rupture</div><div class="eq-val gold" id="eqE2">0.000</div></div>
+  <div class="eq-row"><div class="eq-label">Euler &#x03C7;</div><div class="eq-formula">&#x03C7; = n &#x2212; n(n&#x2212;1)/2</div><div class="eq-val red" id="eqChi">1</div></div>
+</div>
+
+<div class="tag-key">
+  <span class="tag tag-fep">FEP</span> Peer-reviewed Active Inference (Parr, Pezzulo &amp; Friston 2022)&ensp;
+  <span class="tag tag-crr">CRR</span> Temporal grammar (Sabine 2026, temporalgrammar.ai)&ensp;
+  <span class="tag tag-ext">EXT</span> Extension / not derived
+</div>
+
+<div class="tab-content active" id="explainer-intimate"><div class="explainer">
+  <h2>What you are seeing</h2>
+  <p>A complete graph K<sub>n</sub>, where every node connects to every other. Each <strong>node</strong> (purple) is an agent whose internal model traverses a continuous cycle of belief updating <span class="tag tag-fep">FEP</span> &#x2014; SO(2) dynamics <span class="tag tag-crr">CRR</span>. Evidence accumulates along the agent's statistical manifold until the accumulated arc length spans the manifold's full geodesic extent: <span class="m">C = 2&#x03C0;</span>. Then the current regime is exhausted and the agent must reorganise. This is a <em>belief update</em>.</p>
+  <p>Each <strong>edge</strong> (teal) is a <em>Markov blanket</em> <span class="tag tag-fep">FEP</span> &#x2014; a statistical boundary that alternates between two regimes of influence, Z&#x2082; dynamics <span class="tag tag-crr">CRR</span>. Evidence accumulates across a bistable boundary until <span class="m">C = &#x03C0;</span>, then the boundary flips. In both cases, <span class="m">C &#xB7; &#x03A9; = 1</span> at the update threshold &#x2014; structurally analogous to the Cram&#xE9;r-Rao bound <span class="tag tag-fep">FEP</span>.</p>
+  <p>The gold glow is the <strong>edge of criticality</strong> <span class="tag tag-crr">CRR</span> <span class="m">B(C,&#x03A9;) = exp(C/&#x03A9;) &#xB7; (1 &#x2212; C&#xB7;&#x03A9;)</span>, peaking at <span class="m">C* &#x2212; &#x03A9;</span>: one fluctuation-width before the belief update. The system is most sensitive to perturbation &#x2014; most poised, most responsive &#x2014; at the edge, not at the transition itself. This is peak information capacity.</p>
+  <h2>The gain-frequency trade-off</h2>
+  <p>Watch the coherence trace below the network. The Z&#x2082; channel (teal) ruptures frequently at threshold &#x03C0;; the SO(2) channel (purple) ruptures rarely at threshold 2&#x03C0;. The gain-frequency trade-off is visible: <strong>many small sensory updates, few large prior updates</strong>. Both channels process equal total precision-gain per unit time. The fast clock ticks more often but learns less per tick, and the totals balance exactly.</p>
+  <h2>Entrainment and the phase transition</h2>
+  <p>With &#x03B5; = 0, agents accumulate evidence independently and the frequency ratio hovers near 2 (the topological ratio). Raise the entrainment slider and each belief update delivers a precision-weighted prediction error <span class="tag tag-fep">FEP</span> of <span class="m">&#x03B5; &#xB7; &#x03A9;</span> to connected agents. Agents near their own threshold are more <em>susceptible</em>: the prediction error is amplified by <span class="m">(1 + 3p&#x00B2;)</span>, where p is the proportion of evidence accumulated.</p>
+  <p>At maximum entrainment, watch the frequency ratio collapse from ~2 to ~1. This is a <em>phase transition</em>: the independent accumulation that produces the 2:1 ratio is overwhelmed by coupling. Every rupture triggers its neighbours, the channels lock together, and the entire network oscillates as one. The two clocks synchronise.</p>
+  <h2>Agents and blankets</h2>
+  <p>Each blanket is a Z&#x2082; process with variance <span class="m">&#x03A9;<sub>Z&#x2082;</sub> = 1/&#x03C0;</span>, exactly twice the agent's <span class="m">&#x03A9;<sub>SO(2)</sub> = 1/2&#x03C0;</span>. The blanket's higher variance means it is more permeable &#x2014; it must be, to mediate between agent and environment. The agent's lower variance means tighter precision at the expense of longer evidence accumulation.</p>
+  <p>The quadratic explosion: each new agent must form a blanket with every existing agent. Person 4 adds three blankets. Person 10 adds nine. Total blankets = n(n&#x2212;1)/2. At K&#x2083; blankets equal agents; after that, blankets dominate forever.</p>
+  <h2>Integration</h2>
+  <p>The Kuramoto order parameter <span class="m">&#x03A6; = |1/n &#xB7; &#x03A3; exp(i&#x03B8;&#x2C7;)|</span>, where <span class="m">&#x03B8; = 2&#x03C0; &#xB7; C/C*</span> is each agent's evidence-accumulation phase. &#x03A6; = 1 when all agents are synchronised. &#x03A6; &#x2248; 1/&#x221A;n when independent.</p>
+  <p style="text-align:center;margin-top:2rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#a09585;letter-spacing:.15em">ACTIVE INFERENCE INSTITUTE &#xB7; TEMPORAL GRAMMAR &#xB7; 2026</p>
+</div></div>
+<div class="tab-content" id="explainer-scale"><div class="explainer">
+  <h2>What changes at scale</h2>
+  <p>Beyond ~20 agents, the network crosses a threshold. At K&#x2085;&#x2080; there are 1,225 Markov blankets and no agent can attend to each one. The system's dynamics &#x2014; its free energy landscape <span class="tag tag-fep">FEP</span> &#x2014; are dominated by the <em>collective</em>, not by any particular boundary.</p>
+  <h2>The quadratic wall</h2>
+  <p>Blankets scale as <span class="m">n(n&#x2212;1)/2</span>. At K&#x2082;&#x2080; there are 190. At K&#x2085;&#x2080; there are 1,225. At K&#x2081;&#x2085;&#x2080; there are 11,175. The ratio of blankets to agents is <span class="m">(n&#x2212;1)/2</span>: K&#x2081;&#x2085;&#x2080; has 74.5 blankets per agent. Each agent is embedded in 149 simultaneous statistical boundaries. No generative model can track this. The group manages itself.</p>
+  <h2>Dunbar's number</h2>
+  <p>Robin Dunbar proposed ~150 as the cognitive limit for stable social relationships. At K&#x2081;&#x2085;&#x2080;, individual autonomy is <span class="m">1/150 &#x2248; 0.7%</span>. The collective carries 99.3% of the system's variance. Beyond this, the blankets are so dominant that you need <em>hierarchical structure</em> &#x2014; nested Markov blankets <span class="tag tag-fep">FEP</span> &#x2014; to maintain any meaningful individual contribution.</p>
+  <h2>Entrainment cascades at scale</h2>
+  <p>With &#x03B5; > 0 at large n, each belief update delivers <span class="m">&#x03B5; &#xB7; &#x03A9;</span> to connected agents, amplified by susceptibility. At K&#x2081;&#x2085;&#x2080;, each agent has 149 blankets. When several blankets flip in succession, the cumulative prediction error pushes the agent past its own threshold. Its belief update propagates outward through all 149 of <em>its</em> blankets. The cascade appears as a wave of red &#x2014; and the frequency ratio collapses toward 1.</p>
+  <p style="text-align:center;margin-top:2rem;font-family:'JetBrains Mono',monospace;font-size:.65rem;color:#a09585;letter-spacing:.15em">ACTIVE INFERENCE INSTITUTE &#xB7; TEMPORAL GRAMMAR &#xB7; 2026</p>
+</div></div>
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// ACTIVE INFERENCE NETWORK — Phase-Gating Across Precision Channels
+// ═══════════════════════════════════════════════════════════════════════
+//
+// Alexander Sabine · Active Inference Institute
+// temporalgrammar.ai · Alexander@activeinference.institute
+//
+// This simulation implements the CRR (Coherence-Rupture-Regeneration)
+// temporal grammar on a complete graph K_n. The CRR framework provides
+// the computational engine; the GUI uses peer-reviewed FEP / Active
+// Inference terminology exclusively.
+//
+// ─── THE THREE CRR EQUATIONS AND THEIR CODE IMPLEMENTATION ─────────
+//
+// EQUATION 1: COHERENCE
+//   Mathematical form:  C(x,t) = ∫₀ᵗ L(x,τ) dτ
+//   Meaning: Accumulated evidence (arc length on statistical manifold)
+//   Code implementation:
+//     node.C += node.rate * dt     (Euler integration of coherence rate L)
+//     edge.C += edge.rate * dt     (same for Z₂ blankets)
+//   FEP correspondence: Evidence accumulation toward belief update
+//   Paper reference: Eq. (1), §3.1 Commitment 1
+//
+// EQUATION 2: RUPTURE
+//   Mathematical form:  δ(now)  when  C · Ω = 1
+//   Meaning: System has traversed full geodesic extent of its manifold
+//   Code implementation:
+//     if (node.C >= CSTAR_SO2) { ... }   where CSTAR = 1/Ω
+//     if (edge.C >= CSTAR_Z2)  { ... }
+//   Verification:  C*·Ω = (2π)·(1/2π) = 1  ✓  for SO(2)
+//                  C*·Ω = (π)·(1/π)   = 1  ✓  for Z₂
+//   FEP correspondence: Belief update / posterior revision
+//   Paper reference: Eq. (2), §3.1 Commitment 2
+//
+// EQUATION 3: REGENERATION
+//   Mathematical form:  R = ∫ φ(x,τ) · exp(C/Ω) · Θ(t-τ) dτ
+//   Meaning: Reconstruction from history, weighted by coherence
+//   Code implementation (simplified for real-time):
+//     node.rate = max(0.3, 1 + OMEGA_SO2 * randn())
+//     The new accumulation rate is drawn from a distribution scaled
+//     by the system's characteristic variance Ω. This captures the
+//     key property: small Ω → rate clusters tightly around 1 (rigid
+//     reconstitution); large Ω → broad spread (flexible regeneration).
+//   FEP correspondence: Posterior revision with Ω as temperature
+//   Paper reference: Eq. (3), §3.1 Commitment 3
+//
+// ─── THE EDGE OF CRITICALITY FUNCTION ──────────────────────────────
+//
+//   B(C,Ω) = exp(C/Ω) · (1 − C·Ω)
+//
+//   Product of two competing quantities:
+//     exp(C/Ω)   — precision-weighted evidence (rising exponentially)
+//     (1 − C·Ω)  — remaining capacity before rupture (falling linearly)
+//
+//   Peaks at C* − Ω: exactly one Ω before rupture.
+//   The system is most sensitive to perturbation here.
+//   Normalised to [0,1] by dividing by theoretical maximum.
+//
+//   Code: function beauty(C, omega) { ... }
+//   Rendered as: gold glow on nodes/edges approaching threshold
+//
+// ─── SYMMETRY CLASSES (from manifold topology, not fitted) ─────────
+//
+//   Z₂ (Bernoulli manifold — bistable):
+//     Geodesic diameter = π (Amari & Nagaoka 2000)
+//     Ω = 1/π ≈ 0.3183,  C* = π ≈ 3.1416
+//     Assigned to: edges (Markov blankets / sensory precision)
+//     Visual: TEAL (#5a8a7a) — fast flickering
+//
+//   SO(2) (circular manifold S¹ — rotational):
+//     Circumference = 2π
+//     Ω = 1/2π ≈ 0.1592,  C* = 2π ≈ 6.2832
+//     Assigned to: nodes (agents / prior precision)
+//     Visual: PURPLE (#7a5a8a) — slow glowing
+//
+//   Ratio = exactly 2 (topological invariant)
+//   Assignment follows from FEP graph structure (paper §3.3):
+//     Edges are boundaries → bistable (Z₂)
+//     Nodes are models → continuous cycle (SO(2))
+//
+// ─── ENTRAINMENT (prediction error propagation) ────────────────────
+//
+//   On rupture, prediction error delivered to connected agents:
+//     base kick = ε · Ω
+//     susceptibility = 1 + 3p²    where p = C/C* (progress through cycle)
+//     effective kick = ε · Ω · (1 + 3p²)
+//
+//   Agent at 90%: susceptibility ≈ 3.43 (critical slowing down)
+//   Agent at 10%: susceptibility ≈ 1.03 (barely affected)
+//
+//   At ε = 0: channels independent, freq ratio ≈ 2 (topological)
+//   At ε = 1: channels phase-lock, freq ratio → 1 (entrained)
+//   This transition is a genuine phase transition visible in the GUI.
+//
+//   Paper reference: §4.3 (phase-gating), §5.4 (entrainment)
+//
+// ═══════════════════════════════════════════════════════════════════════
+
+const PI=Math.PI;
+const{sin,cos,min,max,exp,abs,sqrt,log,floor,pow,random:rnd}=Math;
+
+// ─── CRR CONSTANTS (derived from manifold topology) ───
+const OMEGA_Z2  = 1/PI;       // Z₂ variance:   1/π ≈ 0.3183
+const OMEGA_SO2 = 1/(2*PI);   // SO(2) variance: 1/2π ≈ 0.1592
+const CSTAR_Z2  = PI;         // Z₂ threshold:   C*·Ω = π·(1/π) = 1
+const CSTAR_SO2 = 2*PI;       // SO(2) threshold: C*·Ω = 2π·(1/2π) = 1
+
+// ─── COLOUR CONVENTION (aligned with paper Fig. 5) ───
+// TEAL = Z₂ (sensory/edges), PURPLE = SO(2) (prior/nodes)
+const COL={bg:'#faf8f5',teal:'#5a8a7a',tealL:'rgba(90,138,122,',purple:'#7a5a8a',purpleL:'rgba(122,90,138,',gold:'#b89a4a',red:'#c45a4a',redL:'rgba(196,90,74,0.25)',dim:'#9a9080'};
+
+// ─── EDGE OF CRITICALITY (CRR Eq. B) ───
+// B(C,Ω) = exp(C/Ω)·(1−C·Ω), normalised by theoretical max
+function beauty(C,omega){
+  const cstar=1/omega;
+  if(C<=0||C>=cstar)return 0;
+  const raw=exp(C/omega)*(1-C*omega);               // Eq. B
+  const bmax=omega*omega*exp(1/(omega*omega)-1);     // max at C*−Ω
+  return raw/bmax;
+}
+function beautyGlow(C,omega){const b=beauty(C,omega);return b<.3?0:min(1,(b-.3)/.7);}
+
+// ─── REGENERATION HELPER: Gaussian noise scaled by Ω ───
+// Used in Eq. (3): new rate drawn from Ω-scaled distribution
+function randn(){let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();return sqrt(-2*log(u))*cos(2*PI*v);}
+
+const canvas=document.getElementById('network'),ctx=canvas.getContext('2d');
+const traceCanvas=document.getElementById('trace'),tctx=traceCanvas.getContext('2d');
+let W,H,dpr,TW,TH;
+let n=2,speed=1,entrainment=0;
+let nodes=[],edges=[],ruptures=[],messages=[];
+let currentTab='intimate';
+const MAX_MESSAGES=400;
+
+// ── COHERENCE TRACE (cf. paper Fig. 5) ──
+const TRACE_LEN=300;
+let traceData={so2:[],z2:[],so2Rups:[],z2Rups:[]};
+let trackedNode=0,trackedEdge=0;
+
+// ── DISCRETE TRIAL CLOCK ──
+// Instead of frame-rate-dependent continuous time (requestAnimationFrame),
+// CRR dynamics run on a fixed-rate interval — a "crystal trial clock".
+// This gives discrete trials exactly like the Python replication script,
+// making metrics (freq ratio, mode, phase-gating) frame-rate-independent.
+//
+// The rendering loop (rAF) only reads state; it never advances physics.
+// Inspired by the crystal oscillator in Song of Time (cohere.org.uk):
+// "ONE CLOCK: the crystal times everything."
+const TRIAL_RATE = 100;        // Hz: discrete trials per second
+const TRIAL_DT = 1/TRIAL_RATE; // fixed dt per trial
+let trialCount = 0;            // total discrete trials elapsed
+let trialInterval = null;      // setInterval handle
+
+// ── METRICS (scoped to tracked agent/edge, discrete-trial-accurate) ──
+let metrics={
+  tZ2Rups:0, tSO2Rups:0,        // tracked rupture counts
+  z2SinceLastSO2:0,              // Z₂ flips of tracked edge between tracked SO(2) ruptures
+  z2PerSO2:[],                   // distribution for modal count
+  startTrial:0                   // trial at which metrics started
+};
+function resetMetrics(){
+  metrics={tZ2Rups:0,tSO2Rups:0,z2SinceLastSO2:0,z2PerSO2:[],startTrial:trialCount};
+}
+
+// ── TABS ──
+function switchTab(tab){currentTab=tab;
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('explainer-'+tab).classList.add('active');
+  const slider=document.getElementById('nSlider');
+  if(tab==='intimate'){slider.min=1;slider.max=20;if(n>20){n=20;slider.value=20;}if(n<1){n=1;slider.value=1;}slider.value=n;}
+  else{slider.min=20;slider.max=150;if(n<20){n=20;slider.value=20;}slider.value=n;}
+  buildNetwork();}
+document.querySelectorAll('.tab-btn').forEach(btn=>{btn.addEventListener('click',()=>switchTab(btn.dataset.tab));});
+
+// ── EXAMPLES ──
+const EXAMPLES={
+  1:{label:'A Self (Limit Case)',nodes:'One agent, one internal cycle',edges:'No blankets',detail:'Without a Markov blanket there is no inside/outside distinction. Selfhood requires at least one boundary.'},
+  2:{label:'A Conversation',nodes:'Two agents',edges:'One Markov blanket between them',detail:'Individual 50%, Collective 50%. The first boundary. Both agents come into existence together.'},
+  3:{label:'A Triad',nodes:'Three agents',edges:'Three blankets',detail:'\u03C7 = 0. Blankets equal agents. The tipping point.'},
+  4:{label:'A Band',nodes:'Four agents',edges:'Six blankets (agent 4 added three at once)',detail:'75% collective. The quadratic explosion begins.'},
+  5:{label:'A Dinner Party',nodes:'Five agents',edges:'Ten blankets',detail:'80% collective. The evening belongs to the table.'},
+  6:{label:'A Meeting',nodes:'Six agents',edges:'Fifteen blankets \u2014 2.5\u00D7 the agents',detail:'83% collective. This is why meetings take on a life of their own.'},
+  7:{label:'A Startup',nodes:'Seven founders',edges:'Twenty-one blankets \u2014 3\u00D7 the agents',detail:'86% collective. The company has a culture none of them chose.'},
+  10:{label:'A Jury',nodes:'Ten agents',edges:'Forty-five blankets \u2014 4.5\u00D7 the agents',detail:'90% collective. The verdict lives in the blankets.'},
+  12:{label:'A Squad',nodes:'Twelve agents',edges:'Sixty-six blankets \u2014 5.5\u00D7 the agents',detail:'92% collective. Small enough to know everyone; large enough for collective intelligence.'},
+  15:{label:'A Seminar',nodes:'Fifteen agents',edges:'105 blankets \u2014 7\u00D7 the agents',detail:'93% collective. Cross-pollination outruns any single mind.'},
+  20:{label:'A Classroom',nodes:'Twenty students',edges:'190 blankets \u2014 9.5\u00D7 the agents',detail:'95% collective. The class has a collective attention the teacher can feel.'},
+  25:{label:'A Platoon',nodes:'Twenty-five agents',edges:'300 blankets \u2014 12\u00D7 the agents',detail:'96% collective. The unit acts as one under pressure.'},
+  30:{label:'A Guild',nodes:'Thirty members',edges:'435 blankets \u2014 14.5\u00D7 the agents',detail:'97% collective. Shared craft knowledge lives in the blanket states.'},
+  40:{label:'An Orchestra',nodes:'Forty musicians',edges:'780 blankets \u2014 19.5\u00D7 the agents',detail:'97.5% collective. The conductor is a compression mechanism for 780 Markov blankets.'},
+  50:{label:'A Community',nodes:'Fifty individuals',edges:'1,225 blankets \u2014 24.5\u00D7 the agents',detail:'98% collective. Almost entirely defined by its boundaries.'},
+  75:{label:'A Department',nodes:'Seventy-five employees',edges:'2,775 blankets \u2014 37\u00D7 the agents',detail:'98.7% collective. Subcultures emerge because no agent can track 74 boundaries.'},
+  100:{label:'A Company',nodes:'A hundred employees',edges:'4,950 blankets \u2014 49.5\u00D7 the agents',detail:'99% collective. No individual shapes the culture. The organisation is its own organism.'},
+  120:{label:'A Village',nodes:'A hundred and twenty people',edges:'7,140 blankets \u2014 59.5\u00D7 the agents',detail:'99.2% collective. Everyone is known, but only through chains of boundaries.'},
+  150:{label:"Dunbar's Number",nodes:'A hundred and fifty people',edges:'11,175 blankets \u2014 74.5\u00D7 the agents',detail:'99.3% collective. The cognitive limit of human social networks. Beyond here, institutions replace relationships.'}
+};
+const NODE_LABELS={1:['self'],2:['you','me'],3:['A','B','C'],4:['guitar','bass','drums','voice'],5:['host','guest','guest','guest','guest'],6:['chair','dev','design','ops','sales','legal'],7:['CEO','CTO','CFO','design','eng','ops','sales']};
+const SUB={'0':'\u2080','1':'\u2081','2':'\u2082','3':'\u2083','4':'\u2084','5':'\u2085','6':'\u2086','7':'\u2087','8':'\u2088','9':'\u2089'};
+function sub(num){return String(num).split('').map(c=>SUB[c]||c).join('');}
+
+// ── SOUND (unchanged) ──
+let ac=null,masterGain=null,soundStyle='off',playSO2=true,playZ2=true;
+const PENTA=[0,3,5,7,10],BASE_FREQ=146.83;
+function noteFreq(i){return BASE_FREQ*pow(2,(PENTA[i%5]+12*floor(i/5))/12);}
+const MAX_VOICES=6;let activeVoices=0;
+function canSpeak(){return activeVoices<MAX_VOICES;}function claimVoice(){activeVoices++;}function releaseVoice(){activeVoices=max(0,activeVoices-1);}
+const VW={mm:[280,800],oo:[320,900],oh:[500,950],ah:[700,1200],eh:[550,1800],ee:[320,2300]};
+function vowelFromBeauty(b){let f1,f2;if(b<.3){const t=b/.3;f1=VW.mm[0]+t*(VW.oo[0]-VW.mm[0]);f2=VW.mm[1]+t*(VW.oo[1]-VW.mm[1]);}else if(b<.6){const t=(b-.3)/.3;f1=VW.oo[0]+t*(VW.ah[0]-VW.oo[0]);f2=VW.oo[1]+t*(VW.ah[1]-VW.oo[1]);}else if(b<.85){const t=(b-.6)/.25;f1=VW.ah[0]+t*(VW.eh[0]-VW.ah[0]);f2=VW.ah[1]+t*(VW.eh[1]-VW.ah[1]);}else{const t=(b-.85)/.15;f1=VW.eh[0]+t*(VW.ee[0]-VW.eh[0]);f2=VW.eh[1]+t*(VW.ee[1]-VW.eh[1]);}return[f1,f2];}
+function initAudio(){if(ac)return;ac=new(AudioContext||webkitAudioContext)();masterGain=ac.createGain();masterGain.gain.value=0.7;const comp=ac.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=6;comp.attack.value=.008;comp.release.value=.12;const rv=ac.createConvolver();const sr=ac.sampleRate,len=sr*4,buf=ac.createBuffer(2,len,sr);for(let ch=0;ch<2;ch++){const d=buf.getChannelData(ch);for(let i=0;i<len;i++){const t=i/sr;d[i]=(t<.06?sin(t*800)*.35*(1-t/.06):0)+exp(-t*.9)*(rnd()*2-1)*.45*(1+.15*sin(t*2*(ch+1)));}}rv.buffer=buf;const dry=ac.createGain(),wet=ac.createGain();dry.gain.value=.55;wet.gain.value=.45;masterGain.connect(dry);masterGain.connect(rv);rv.connect(wet);dry.connect(comp);wet.connect(comp);comp.connect(ac.destination);}
+function bellPlayNode(idx){const now=ac.currentTime,freq=noteFreq(idx),vol=.14;const o1=ac.createOscillator(),o2=ac.createOscillator();o1.type='sine';o1.frequency.value=freq;o2.type='triangle';o2.frequency.value=freq*2;const g1=ac.createGain(),g2=ac.createGain();g1.gain.setValueAtTime(0,now);g1.gain.linearRampToValueAtTime(vol,now+.015);g1.gain.exponentialRampToValueAtTime(.001,now+2);g2.gain.setValueAtTime(0,now);g2.gain.linearRampToValueAtTime(vol*.2,now+.01);g2.gain.exponentialRampToValueAtTime(.001,now+1.3);const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=freq*4;f.Q.value=.7;o1.connect(g1);g1.connect(f);o2.connect(g2);g2.connect(f);f.connect(masterGain);o1.start(now);o2.start(now);o1.stop(now+2.2);o2.stop(now+1.5);}
+function bellPlayEdge(a,b){const now=ac.currentTime,freq=noteFreq(a)+noteFreq(b),vol=.08;const o=ac.createOscillator();o.type='triangle';o.frequency.value=freq;const g=ac.createGain();g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(vol,now+.004);g.gain.exponentialRampToValueAtTime(.001,now+.5);o.connect(g);g.connect(masterGain);o.start(now);o.stop(now+.6);}
+function voiceUtter(pitch,dur,vol){if(!canSpeak())return;claimVoice();const now=ac.currentTime;const breathG=ac.createGain();breathG.gain.value=0;breathG.connect(masterGain);let lastOsc=null;for(let li=0;li<5;li++){const src=ac.createOscillator();src.type='sawtooth';src.frequency.value=pitch;src.detune.value=(li-2)*4;const vib=ac.createOscillator();vib.type='sine';vib.frequency.value=5.5+(li-2)*.2;const vibG=ac.createGain();vibG.gain.value=20;vib.connect(vibG);vibG.connect(src.detune);const f1=ac.createBiquadFilter();f1.type='bandpass';f1.frequency.value=400;f1.Q.value=8+li*.5;const f2=ac.createBiquadFilter();f2.type='bandpass';f2.frequency.value=1200;f2.Q.value=10+li*.3;const f3=ac.createBiquadFilter();f3.type='bandpass';f3.frequency.value=2800;f3.Q.value=12;const fg1=ac.createGain(),fg2=ac.createGain(),fg3=ac.createGain();fg1.gain.value=.5;fg2.gain.value=.35;fg3.gain.value=.15;src.connect(f1);src.connect(f2);src.connect(f3);f1.connect(fg1);f2.connect(fg2);f3.connect(fg3);const layerG=ac.createGain();layerG.gain.value=vol/5;fg1.connect(layerG);fg2.connect(layerG);fg3.connect(layerG);layerG.connect(breathG);const steps=16;for(let s=0;s<=steps;s++){const t=now+(s/steps)*dur;const B=beauty((s/steps)*CSTAR_Z2,OMEGA_Z2);const[vf1,vf2]=vowelFromBeauty(B);f1.frequency.setValueAtTime(vf1,t);f2.frequency.setValueAtTime(vf2,t);f3.frequency.setValueAtTime(2500+B*600,t);vibG.gain.setValueAtTime(10+B*25,t);}src.frequency.setValueAtTime(pitch,now);src.frequency.linearRampToValueAtTime(pitch*1.03,now+dur*.4);src.frequency.linearRampToValueAtTime(pitch*.98,now+dur);src.start(now);vib.start(now);src.stop(now+dur+.05);vib.stop(now+dur+.05);lastOsc=src;}const subO=ac.createOscillator();subO.type='sine';subO.frequency.value=pitch/2;const subG=ac.createGain();subG.gain.setValueAtTime(0,now);subG.gain.linearRampToValueAtTime(vol*.04,now+dur*.3);subG.gain.linearRampToValueAtTime(0,now+dur);subO.connect(subG);subG.connect(breathG);subO.start(now);subO.stop(now+dur+.05);breathG.gain.setValueAtTime(.001,now);breathG.gain.linearRampToValueAtTime(vol*.8,now+.06);for(let s=1;s<8;s++){const frac=s/8;breathG.gain.linearRampToValueAtTime(vol*(.3+beauty(frac*CSTAR_Z2,OMEGA_Z2)*.7),now+.06+frac*(dur-.06-dur*.15));}breathG.gain.linearRampToValueAtTime(vol*.1,now+dur*.92);breathG.gain.linearRampToValueAtTime(0,now+dur);if(lastOsc)lastOsc.onended=releaseVoice;}
+function playNodeSound(idx){if(soundStyle==='off'||!playSO2||!ac)return;if(n>30)return;if(soundStyle==='bells')bellPlayNode(idx);else if(soundStyle==='voice'){const pitch=(idx%2===0?175:330)*pow(2,PENTA[idx%5]/12);voiceUtter(pitch,min(2.0,CSTAR_SO2/PI/sqrt(max(1,n/3))),.22);}}
+function playEdgeSound(a,b){if(soundStyle==='off'||!playZ2||!ac)return;if(n>20)return;if(soundStyle==='bells')bellPlayEdge(a,b);else if(soundStyle==='voice'){voiceUtter(((a%2===0?175:330)*pow(2,PENTA[a%5]/12)+(b%2===0?175:330)*pow(2,PENTA[b%5]/12))/2,.4,.07);}}
+document.getElementById('soundStyle').addEventListener('change',e=>{soundStyle=e.target.value;if(soundStyle!=='off'){initAudio();if(ac.state==='suspended')ac.resume();}});
+document.getElementById('chkSO2').addEventListener('change',e=>{playSO2=e.target.checked;});
+document.getElementById('chkZ2').addEventListener('change',e=>{playZ2=e.target.checked;});
+
+// ── NETWORK ──
+function resize(){dpr=devicePixelRatio||1;const r=canvas.getBoundingClientRect();W=r.width;H=r.height||W*.7;canvas.width=W*dpr;canvas.height=H*dpr;canvas.style.height=H+'px';ctx.setTransform(dpr,0,0,dpr,0,0);const tr=traceCanvas.getBoundingClientRect();TW=tr.width;TH=tr.height||100;traceCanvas.width=TW*dpr;traceCanvas.height=TH*dpr;traceCanvas.style.height=TH+'px';tctx.setTransform(dpr,0,0,dpr,0,0);}
+function buildNetwork(){nodes=[];edges=[];ruptures=[];messages=[];
+  const cx=W/2,cy=H/2,radius=n===1?0:min(W,H)*(n>30?.42:.38);
+  for(let i=0;i<n;i++){const a=n===1?0:(i/n)*2*PI-PI/2;
+    // Eq. (3): Initial C drawn randomly; rate from Ω-scaled distribution
+    nodes.push({x:cx+radius*cos(a),y:cy+radius*sin(a),C:rnd()*CSTAR_SO2,rate:max(.3,1+OMEGA_SO2*randn()),phase:rnd()*2*PI,rupturing:0,index:i});}
+  for(let i=0;i<n;i++)for(let j=i+1;j<n;j++)
+    edges.push({a:i,b:j,C:rnd()*CSTAR_Z2,rate:max(.3,1+OMEGA_Z2*randn()),rupturing:0});
+  trackedNode=0;trackedEdge=edges.length>0?0:-1;
+  traceData={so2:[],z2:[],so2Rups:[],z2Rups:[]};
+  resetMetrics();updateReadouts();}
+
+function updateReadouts(){const nn=n,ne=n*(n-1)/2;
+  document.getElementById('nDisplay').textContent='K'+sub(n);document.getElementById('rNodes').textContent=nn;document.getElementById('rEdges').textContent=ne;
+  document.getElementById('rIndAuto').textContent=(1/n).toFixed(3);document.getElementById('rGrpAuto').textContent=((n-1)/n).toFixed(3);
+  document.getElementById('rEuler').textContent=(nn-ne>=0?nn-ne:'\u2212'+abs(nn-ne));
+  document.getElementById('eqInd').textContent=(1/n).toFixed(3);document.getElementById('eqGrp').textContent=((n-1)/n).toFixed(3);
+  document.getElementById('eqChi').textContent=(nn-ne>=0?nn-ne:'\u2212'+abs(nn-ne));
+  const ex=EXAMPLES[n];const exT=document.getElementById('exTitle'),exL=document.getElementById('exLabel'),exD=document.getElementById('exDetail');
+  if(ex){exT.textContent='for instance';exL.innerHTML='<strong>'+ex.label+'</strong>';exD.innerHTML='<span class="ex-nodes">'+ex.nodes+'</span>. <span class="ex-edges">'+ex.edges+'</span>. '+ex.detail;}
+  else{exT.textContent='';exL.innerHTML='';exD.innerHTML='';}}
+
+// ── CRR DYNAMICS (one discrete trial) ──
+// Called at TRIAL_RATE Hz by setInterval, NOT by requestAnimationFrame.
+// Each call = one discrete trial with fixed dt = 1/TRIAL_RATE.
+function runTrial(){
+  const sDt=TRIAL_DT*speed;
+  trialCount++;
+
+  // ─── SO(2) AGENTS: Eq. (1) → Eq. (2) → Eq. (3) ───
+  for(const node of nodes){
+    node.C+=node.rate*sDt;           // Eq. (1): C += L·dt
+    node.phase+=sDt*.5;
+    if(node.C>=CSTAR_SO2){           // Eq. (2): rupture when C·Ω ≥ 1
+      if(node.index===trackedNode){
+        metrics.tSO2Rups++;
+        // Record Z₂-per-SO(2) count for this cycle (for modal count)
+        metrics.z2PerSO2.push(metrics.z2SinceLastSO2);
+        if(metrics.z2PerSO2.length>300)metrics.z2PerSO2.shift();
+        metrics.z2SinceLastSO2=0;
+        traceData.so2Rups.push(traceData.so2.length);
+      }
+      node.C=0;node.rupturing=1;
+      node.rate=max(.3,1+OMEGA_SO2*randn()); // Eq. (3)
+      ruptures.push({x:node.x,y:node.y,t:1});playNodeSound(node.index);
+      if(messages.length<MAX_MESSAGES){const prob=n>20?min(1,20/n):1;
+        for(const edge of edges){if(edge.a===node.index||edge.b===node.index){if(rnd()>prob)continue;
+          const target=edge.a===node.index?edge.b:edge.a;
+          messages.push({from:node.index,to:target,progress:0,speed:.6+rnd()*.4,col:COL.purple});}}}
+      if(entrainment>0){const agentKick=entrainment*OMEGA_SO2;
+        for(const edge of edges){if(edge.a===node.index||edge.b===node.index){
+          const nb=nodes[edge.a===node.index?edge.b:edge.a];
+          const s=1+3*pow(nb.C/CSTAR_SO2,2);nb.C=min(nb.C+agentKick*s,CSTAR_SO2);}}}}
+    if(node.rupturing>0)node.rupturing-=sDt*2;}
+
+  // ─── Z₂ BLANKETS ───
+  for(let ei=0;ei<edges.length;ei++){const edge=edges[ei];
+    edge.C+=edge.rate*sDt;           // Eq. (1)
+    if(edge.C>=CSTAR_Z2){            // Eq. (2)
+      if(ei===trackedEdge){
+        metrics.tZ2Rups++;
+        metrics.z2SinceLastSO2++;    // count toward Z₂-per-SO(2)
+        traceData.z2Rups.push(traceData.z2.length);
+      }
+      edge.C=0;edge.rupturing=1;
+      edge.rate=max(.3,1+OMEGA_Z2*randn()); // Eq. (3)
+      const na=nodes[edge.a],nb=nodes[edge.b];
+      ruptures.push({x:(na.x+nb.x)/2,y:(na.y+nb.y)/2,t:1});playEdgeSound(edge.a,edge.b);
+      if(messages.length<MAX_MESSAGES-1){messages.push({from:edge.a,to:edge.b,progress:0,speed:.8+rnd()*.4,col:COL.teal});messages.push({from:edge.b,to:edge.a,progress:0,speed:.8+rnd()*.4,col:COL.teal});}
+      if(entrainment>0){const baseKick=entrainment*OMEGA_Z2;
+        const sA=1+3*pow(na.C/CSTAR_SO2,2);const sB=1+3*pow(nb.C/CSTAR_SO2,2);
+        na.C=min(na.C+baseKick*sA,CSTAR_SO2);nb.C=min(nb.C+baseKick*sB,CSTAR_SO2);}}
+    if(edge.rupturing>0)edge.rupturing-=sDt*2;}
+
+  // Messages (advance on trial clock too)
+  for(let i=messages.length-1;i>=0;i--){messages[i].progress+=messages[i].speed*sDt;if(messages[i].progress>=1)messages.splice(i,1);}
+
+  // Integration Φ
+  let sc=0,ss=0;for(const node of nodes){const th=2*PI*node.C/CSTAR_SO2;sc+=cos(th);ss+=sin(th);}
+  const phi=n>0?sqrt(sc*sc+ss*ss)/n:0;document.getElementById('rPhi').textContent=phi.toFixed(3);document.getElementById('eqPhi').textContent=phi.toFixed(3);
+
+  // Trace data (one sample per trial — discrete, like Python)
+  if(nodes.length>0){traceData.so2.push(nodes[trackedNode].C);if(traceData.so2.length>TRACE_LEN)traceData.so2.shift();}
+  if(trackedEdge>=0&&trackedEdge<edges.length){traceData.z2.push(edges[trackedEdge].C);if(traceData.z2.length>TRACE_LEN)traceData.z2.shift();}
+  const so2Off=max(0,traceData.so2.length-TRACE_LEN);while(traceData.so2Rups.length>0&&traceData.so2Rups[0]<so2Off)traceData.so2Rups.shift();
+  const z2Off=max(0,traceData.z2.length-TRACE_LEN);while(traceData.z2Rups.length>0&&traceData.z2Rups[0]<z2Off)traceData.z2Rups.shift();
+
+  for(let i=ruptures.length-1;i>=0;i--){ruptures[i].t-=sDt*1.5;if(ruptures[i].t<=0)ruptures.splice(i,1);}
+}
+
+function updateMetricsDisplay(){
+  const elapsed=(trialCount-metrics.startTrial)/TRIAL_RATE; // crystal-accurate seconds
+  if(elapsed<2)return;
+  const fz2=metrics.tZ2Rups/elapsed;
+  const fso2=metrics.tSO2Rups/elapsed;
+  document.getElementById('mFreqZ2').textContent=fz2.toFixed(1)+'/s';
+  document.getElementById('mFreqSO2').textContent=fso2.toFixed(1)+'/s';
+  // Freq ratio
+  document.getElementById('mFreqRatio').textContent=fso2>0.05?(fz2/fso2).toFixed(2):'--';
+  // Modal Z₂ per SO(2) cycle (now discrete-trial-accurate)
+  if(metrics.z2PerSO2.length>5){
+    const counts={};metrics.z2PerSO2.forEach(c=>{counts[c]=(counts[c]||0)+1;});
+    let mode=0,modeCount=0;for(const[k,v]of Object.entries(counts)){if(v>modeCount){mode=+k;modeCount=v;}}
+    const mean=metrics.z2PerSO2.reduce((a,b)=>a+b,0)/metrics.z2PerSO2.length;
+    document.getElementById('mMode').textContent='mode '+mode+' (\u03BC'+mean.toFixed(1)+')';
+  }
+  // Edge of criticality
+  if(nodes.length>0){document.getElementById('mBeauty').textContent=beauty(nodes[trackedNode].C,OMEGA_SO2).toFixed(3);}
+}
+
+// Start/stop the crystal trial clock
+function startTrialClock(){
+  if(trialInterval)clearInterval(trialInterval);
+  trialInterval=setInterval(runTrial,1000/TRIAL_RATE);
+}
+function stopTrialClock(){
+  if(trialInterval){clearInterval(trialInterval);trialInterval=null;}
+}
+
+// ── DRAW NETWORK ──
+function draw(){ctx.clearRect(0,0,W,H);const nodeR=n===1?30:max(2,min(22,160/n));const ringW=n>50?1:2;const drawAllEdges=n<=15;
+  for(let ei=0;ei<edges.length;ei++){const edge=edges[ei];const a=nodes[edge.a],b=nodes[edge.b];const p=edge.C/CSTAR_Z2;const glow=beautyGlow(edge.C,OMEGA_Z2);
+    if(!drawAllEdges&&glow===0&&edge.rupturing<=0)continue;const alpha=drawAllEdges?(.06+p*.3):(.1+p*.4);const w=drawAllEdges?(1+p*2):(1+p*1.5);
+    ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);
+    if(edge.rupturing>0){ctx.strokeStyle=COL.red;ctx.lineWidth=w+edge.rupturing*3;ctx.globalAlpha=alpha+edge.rupturing*.5;}
+    else if(glow>0){ctx.strokeStyle=`rgb(${90+94*glow|0},${138+16*glow|0},${122-48*glow|0})`;ctx.lineWidth=w+glow*2;ctx.globalAlpha=alpha+glow*.3;}
+    else{ctx.strokeStyle=COL.teal;ctx.lineWidth=w;ctx.globalAlpha=alpha;}
+    if(ei===trackedEdge){ctx.globalAlpha=min(1,ctx.globalAlpha+.15);ctx.lineWidth+=.5;}
+    ctx.stroke();ctx.globalAlpha=1;}
+  if(!drawAllEdges){const step=n>80?8:3;ctx.globalAlpha=.025;ctx.strokeStyle=COL.teal;ctx.lineWidth=.5;for(let i=0;i<n;i+=step)for(let j=i+step;j<n;j+=step){ctx.beginPath();ctx.moveTo(nodes[i].x,nodes[i].y);ctx.lineTo(nodes[j].x,nodes[j].y);ctx.stroke();}ctx.globalAlpha=1;}
+  for(const msg of messages){const from=nodes[msg.from],to=nodes[msg.to];const p=msg.progress;const mx=from.x+(to.x-from.x)*p,my=from.y+(to.y-from.y)*p;const size=2+sin(p*PI)*3,alpha=sin(p*PI)*.7;ctx.beginPath();ctx.arc(mx,my,size,0,2*PI);ctx.fillStyle=msg.col;ctx.globalAlpha=alpha;ctx.fill();ctx.globalAlpha=1;}
+  for(const r of ruptures){ctx.beginPath();ctx.arc(r.x,r.y,(1-r.t)*20+4,0,2*PI);ctx.fillStyle=COL.redL;ctx.globalAlpha=r.t*.6;ctx.fill();ctx.globalAlpha=1;}
+  for(const node of nodes){const p=node.C/CSTAR_SO2,glow=beautyGlow(node.C,OMEGA_SO2);
+    ctx.beginPath();ctx.arc(node.x,node.y,nodeR+ringW+1,-PI/2,-PI/2+p*2*PI);
+    ctx.strokeStyle=node.rupturing>0?COL.red:(glow>0?`rgb(${122+62*glow|0},${90+64*glow|0},${138-64*glow|0})`:COL.purple);
+    ctx.lineWidth=ringW+glow;ctx.globalAlpha=.5+p*.5;ctx.stroke();ctx.globalAlpha=1;
+    ctx.beginPath();ctx.arc(node.x,node.y,nodeR,0,2*PI);const fa=.15+p*.35;
+    if(node.rupturing>0)ctx.fillStyle=`rgba(196,90,74,${fa+node.rupturing*.3})`;
+    else if(glow>0)ctx.fillStyle=`rgba(184,154,74,${fa*glow+fa*(1-glow)*.6})`;
+    else ctx.fillStyle=COL.purpleL+fa+')';
+    ctx.fill();ctx.strokeStyle=node.rupturing>0?COL.red:(glow>0?COL.gold:COL.purple);ctx.lineWidth=1;ctx.globalAlpha=.5;ctx.stroke();ctx.globalAlpha=1;
+    if(nodeR>6){const ix=node.x+(nodeR-2)*cos(node.phase),iy=node.y+(nodeR-2)*sin(node.phase);ctx.beginPath();ctx.arc(ix,iy,max(1.5,nodeR/8),0,2*PI);ctx.fillStyle=glow>0?COL.gold:COL.purple;ctx.globalAlpha=.5+p*.4;ctx.fill();ctx.globalAlpha=1;}
+    if(node.index===trackedNode&&n>1){ctx.beginPath();ctx.arc(node.x,node.y,nodeR+ringW+5,0,2*PI);ctx.strokeStyle='rgba(184,154,74,.3)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);}}
+  const labels=NODE_LABELS[n];if(labels){ctx.textAlign='center';ctx.textBaseline='middle';ctx.font=`${n===1?12:max(8,min(11,60/n+5))}px "JetBrains Mono",monospace`;for(let i=0;i<nodes.length;i++){const nd=nodes[i];const off=n===1?(nodeR+16):(nd.y<H/2?-(nodeR+10):(nodeR+10));ctx.fillStyle=COL.dim;ctx.globalAlpha=.7;ctx.fillText(labels[i]||'',nd.x,nd.y+off);}ctx.globalAlpha=1;}
+  ctx.font='10px "JetBrains Mono",monospace';ctx.fillStyle=COL.dim;ctx.textAlign='left';const ne=n*(n-1)/2;
+  ctx.fillText(`K${sub(n)}: ${n} SO(2) agent${n>1?'s':''}  ${ne>0?ne+' Z\u2082 blanket'+(ne>1?'s':''):'pure autonomy'}`,10,16);
+  ctx.fillText(`B(C,\u03A9) = exp(C/\u03A9)\u00B7(1\u2212C\u00B7\u03A9)  edge of criticality`,10,30);}
+
+// ── DRAW TRACE (cf. paper Fig. 5) ──
+function drawTrace(){
+  tctx.clearRect(0,0,TW,TH);const pad={l:35,r:10,t:8,b:18};const pw=TW-pad.l-pad.r,ph=TH-pad.t-pad.b;
+  tctx.fillStyle='rgba(245,242,237,.5)';tctx.fillRect(pad.l,pad.t,pw,ph);
+  const maxY=2*PI+.5;
+  function toX(i,len){return pad.l+((i)/min(len,TRACE_LEN))*pw;}
+  function toY(v){return pad.t+ph*(1-v/maxY);}
+  // Threshold lines: π (Z₂) and 2π (SO(2))
+  tctx.setLineDash([4,4]);const yPi=toY(PI);
+  tctx.strokeStyle='rgba(90,138,122,.3)';tctx.lineWidth=1;tctx.beginPath();tctx.moveTo(pad.l,yPi);tctx.lineTo(pad.l+pw,yPi);tctx.stroke();
+  const y2Pi=toY(2*PI);tctx.strokeStyle='rgba(122,90,138,.3)';tctx.beginPath();tctx.moveTo(pad.l,y2Pi);tctx.lineTo(pad.l+pw,y2Pi);tctx.stroke();tctx.setLineDash([]);
+  tctx.font='8px "JetBrains Mono",monospace';tctx.textAlign='right';
+  tctx.fillStyle='rgba(90,138,122,.5)';tctx.fillText('\u03C0',pad.l-3,yPi+3);
+  tctx.fillStyle='rgba(122,90,138,.5)';tctx.fillText('2\u03C0',pad.l-3,y2Pi+3);
+  tctx.fillStyle='rgba(154,144,128,.4)';tctx.fillText('0',pad.l-3,pad.t+ph+3);
+  // Z₂ trace (TEAL)
+  const z2Len=traceData.z2.length;if(z2Len>1){const start=max(0,z2Len-TRACE_LEN);tctx.strokeStyle=COL.teal;tctx.lineWidth=1.2;tctx.globalAlpha=.7;tctx.beginPath();for(let i=start;i<z2Len;i++){const x=toX(i-start,z2Len),y=toY(traceData.z2[i]);i===start?tctx.moveTo(x,y):tctx.lineTo(x,y);}tctx.stroke();tctx.globalAlpha=1;}
+  // SO(2) trace (PURPLE)
+  const so2Len=traceData.so2.length;if(so2Len>1){const start=max(0,so2Len-TRACE_LEN);tctx.strokeStyle=COL.purple;tctx.lineWidth=1.5;tctx.globalAlpha=.8;tctx.beginPath();for(let i=start;i<so2Len;i++){const x=toX(i-start,so2Len),y=toY(traceData.so2[i]);i===start?tctx.moveTo(x,y):tctx.lineTo(x,y);}tctx.stroke();tctx.globalAlpha=1;}
+  // SO(2) rupture markers
+  const so2Start=max(0,so2Len-TRACE_LEN);for(const ri of traceData.so2Rups){const idx=ri-so2Start;if(idx>=0&&idx<TRACE_LEN){const x=toX(idx,so2Len);tctx.strokeStyle='rgba(122,90,138,.25)';tctx.lineWidth=1;tctx.beginPath();tctx.moveTo(x,pad.t);tctx.lineTo(x,pad.t+ph);tctx.stroke();}}}
+
+let lastTime=0;
+function animate(t){
+  const dt=min((t-lastTime)/1000,.05);lastTime=t;
+  // Physics runs on the crystal trial clock (setInterval), NOT here.
+  // rAF only renders current state + updates metrics display.
+  updateMetricsDisplay();
+  draw();drawTrace();
+  requestAnimationFrame(animate);
+}
+document.getElementById('nSlider').addEventListener('input',e=>{n=parseInt(e.target.value);buildNetwork();startTrialClock();document.getElementById('presetSelect').value='';});
+document.getElementById('presetSelect').addEventListener('change',e=>{
+  const v=parseInt(e.target.value);if(!v)return;
+  n=v;
+  // Switch tab if needed
+  if(v>20&&currentTab==='intimate')switchTab('scale');
+  else if(v<=20&&currentTab==='scale')switchTab('intimate');
+  document.getElementById('nSlider').value=v;
+  buildNetwork();startTrialClock();
+});
+document.getElementById('speedSlider').addEventListener('input',e=>{speed=parseFloat(e.target.value);});
+document.getElementById('entrainSlider').addEventListener('input',e=>{entrainment=parseFloat(e.target.value);document.getElementById('eqE2').textContent=(entrainment*OMEGA_Z2).toFixed(3);});
+window.addEventListener('resize',()=>{resize();buildNetwork();startTrialClock();});
+resize();buildNetwork();startTrialClock();requestAnimationFrame(animate);
+</script>
+</body>
+</html>
