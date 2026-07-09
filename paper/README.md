@@ -114,6 +114,27 @@ listening on the journey home from the conference:
 
 ---
 
+## ✍️ Related reading: *A Place to Behold and Be Held*
+
+**[A Place to Behold and Be Held — A Spring in Crescent City](https://www.space-zero.org/blog/a-place-to-behold-and-be-held.html)**
+(Emergent Stories No. 01, Blog Zero, [Space Zero](https://www.space-zero.org))
+
+A personal essay telling the story behind this research: how a child development
+lecturer from the Isle of Wight came to spend Spring 2026 in Crescent City,
+California — hosted by Daniel Friedman and the Active Inference Institute /
+Space Zero community, where the world's tallest forest meets the Pacific — and
+learned midway through the stay that the phase-gating paper had been accepted
+for AGI 2026. The essay connects two decades of practising and teaching child
+development (Winnicott's *holding*, Reggio Emilia's environment as "third
+teacher", the serious business of play) to the questions in these papers: a
+mind that is held can reach further back into its history and further out into
+what it might become, and a self is "less a wall than a living edge, remade in
+every meeting." It argues that unhurried, embodied, held spaces are not a soft
+extra alongside frontier AI and complexity science but a precondition for it —
+and closes with full references, including the two papers in this folder.
+
+---
+
 ## About `index.html` (repository root)
 
 The root of this repository is the website for **[Honami](https://www.honami.co.uk/)**
@@ -138,5 +159,8 @@ including this AGI 2026 paper, and contact details.
 3. **Check the numbers:** run `CRR_PG (2).py` to reproduce every result.
 4. **Go deeper:** read `boundary_paper (pre-print).pdf` and run `boundary.py`.
 5. **Listen:** put on one of the MP3s.
+6. **The story behind it:** read
+   [*A Place to Behold and Be Held*](https://www.space-zero.org/blog/a-place-to-behold-and-be-held.html)
+   on Space Zero's blog.
 
 Questions and conversations welcome: Alexander@activeinference.institute
