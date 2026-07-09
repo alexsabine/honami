@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phase-Gating Across Precision Channels · AGI 2026 Companion Materials</title>
+<meta name="description" content="Companion materials for the AGI 2026 paper 'Phase-Gating Across Precision Channels' by Alexander Sabine — the paper, poster, replication code, interactive simulation, companion pre-print, and audio discussions.">
+<link rel="icon" href="/favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f1e9; --paper-warm:#efe9dc; --ink:#23362c; --ink-dim:#6f8576;
+    --rule:#d9d2c2; --amber:#b48a3c; --russet:#b0663c;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  body{
+    background:var(--paper); color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif; font-weight:300;
+    font-size:1.02rem; line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:44rem; margin:0 auto; padding:2.5rem 1.35rem 4rem; }
+  a{ color:var(--russet); text-decoration:underline; text-decoration-thickness:1px; text-underline-offset:2px; }
+  a:hover{ color:var(--amber); }
+  h1,h2{ font-family:"Fraunces",serif; font-weight:400; line-height:1.25; }
+  h1{ font-size:1.85rem; margin:.5rem 0 1rem; }
+  h2{ font-size:1.3rem; margin:2.6rem 0 .7rem; padding-top:1.6rem; border-top:1px solid var(--rule); }
+  h2 .tag{ display:block; font-family:"Inter",sans-serif; font-size:.72rem; font-weight:500;
+    letter-spacing:.14em; text-transform:uppercase; color:var(--ink-dim); margin-bottom:.35rem; }
+  p{ margin:.75rem 0; }
+  em{ font-style:italic; }
+  strong{ font-weight:500; }
+  .kicker{ font-size:.75rem; font-weight:500; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-dim); }
+  .lede{ color:var(--ink-dim); font-size:1.05rem; }
+  .cite{
+    background:var(--paper-warm); border:1px solid var(--rule); border-left:3px solid var(--amber);
+    padding:1rem 1.15rem; margin:1.4rem 0; font-size:.95rem;
+  }
+  .meta{ font-size:.9rem; color:var(--ink-dim); margin-top:1rem; }
+  .meta a{ color:var(--ink-dim); }
+  .dl{
+    display:inline-block; margin:.5rem .55rem .1rem 0; padding:.42rem .85rem;
+    border:1px solid var(--ink); border-radius:2rem; font-size:.85rem; font-weight:500;
+    color:var(--ink); text-decoration:none;
+  }
+  .dl:hover{ background:var(--ink); color:var(--paper); }
+  code{
+    font-family:"JetBrains Mono","Inter",monospace; font-size:.85em;
+    background:var(--paper-warm); border:1px solid var(--rule); border-radius:3px; padding:.08em .35em;
+  }
+  ul,ol{ margin:.75rem 0 .75rem 1.3rem; }
+  li{ margin:.35rem 0; }
+  audio{ width:100%; margin:.5rem 0 .2rem; }
+  .audio-item{ margin:1.1rem 0; }
+  footer{ margin-top:3.5rem; padding-top:1.4rem; border-top:1px solid var(--rule);
+    font-size:.88rem; color:var(--ink-dim); }
+  footer a{ color:var(--ink-dim); }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <p class="kicker">AGI 2026 · Companion Materials</p>
+  <h1>Phase-Gating Across Precision Channels</h1>
+  <p class="lede">Welcome! If you've arrived here from the QR code on the conference
+  poster, this page gathers the published paper, the poster itself, full replication
+  code, an interactive simulation, a companion pre-print, and two audio discussions.</p>
+
+  <div class="cite">
+    Sabine, A.: <em>Phase-Gating Across Precision Channels: Topological Constraints on
+    Multi-Channel Belief Update Dynamics.</em> In: Artificial General Intelligence
+    (AGI&nbsp;2026), Chapter&nbsp;17. LNCS, vol.&nbsp;16855. Springer Nature (2026).
+  </div>
+
+  <p class="meta">Alexander Sabine — Independent Researcher, Active Inference Institute<br>
+  <a href="https://www.temporalgrammar.ai">temporalgrammar.ai</a> ·
+  <a href="mailto:Alexander@activeinference.institute">Alexander@activeinference.institute</a></p>
+
+  <h2><span class="tag">Paper</span>The published paper</h2>
+  <p>The full conference paper (18 pages). It introduces the
+  <strong>Coherence–Rupture–Regeneration (CRR)</strong> framework: the proposal that every
+  finite, persisting system cycles through three temporal operations — it accumulates
+  evidence (<em>coherence</em>), reaches the limits of its current regime
+  (<em>rupture</em>), and reconstructs from its own history (<em>regeneration</em>). The
+  dynamics are governed by a single geometric parameter <strong>Ω</strong>, fixed by the
+  topology of the system's statistical manifold. Two symmetry classes yield two thresholds
+  with <strong>no free parameters</strong>: <strong>π</strong> for bistable (Z₂) systems and
+  <strong>2π</strong> for rotational (SO(2)) systems — a ratio of exactly 2.</p>
+  <p>The paper applies CRR to a concrete problem in multi-channel AGI architecture: how
+  multiple precision channels coordinate their belief updates in Active Inference.
+  Assigning Z₂ symmetry to sensory precision and SO(2) to prior precision, and testing in
+  a POMDP with Dirichlet learning, the primary finding is <strong>phase-gating</strong>:
+  the topological thresholds produce a strongly non-uniform phase relationship between
+  channels (χ²&nbsp;=&nbsp;8,041) that determines whether each update drives learning or
+  action. The result is consistent across environment topologies, independent of the
+  weight function, and structurally compatible with recent empirical findings on
+  neuromodulatory timing (Jang et al.).</p>
+  <a class="dl" href="AGI_2026.pdf">Read the paper (PDF)</a>
+
+  <h2><span class="tag">Poster</span>The conference poster</h2>
+  <p>The one-page AGI 2026 poster. A visual tour of the temporal grammar: dynamic vs.
+  geometric CRR, low-Ω rigidity vs. high-Ω flexibility, the rupture condition
+  C&nbsp;·&nbsp;Ω&nbsp;=&nbsp;1, the "holding structure" loop of exploration and safe
+  return, and some open ontological questions ("only the past has content — what is
+  <em>now</em>?"). It closes with the question the paper leaves for the field:
+  <em>when will AGI learn to break safely?</em></p>
+  <a class="dl" href="CRR_%20Temporal%20Grammar%20-%20Phase%20Gating.pdf">View the poster (PDF)</a>
+
+  <h2><span class="tag">Code</span>Replication script for the paper</h2>
+  <p>A single, self-contained script that reproduces <strong>every numerical claim in the
+  paper</strong>, with sections matching the paper's sections. It implements the test
+  environments (ring, chain, and other HMM topologies), the two-channel CRR dynamics with
+  the fixed Z₂/SO(2) constants, and the phase-gating analysis.</p>
+  <ul>
+    <li>Requires: <code>numpy</code>, <code>scipy</code>, <code>matplotlib</code></li>
+    <li>Run: <code>python3 "CRR_PG (2).py"</code></li>
+    <li>Runtime: ~10–15 minutes on a modern machine; fixed seed for reproducibility</li>
+  </ul>
+  <a class="dl" href="CRR_PG%20(2).py" download>Download CRR_PG.py</a>
+
+  <h2><span class="tag">Interactive</span>Human networks simulation</h2>
+  <p>The interactive Active Inference Network simulation referenced in the paper. Open it
+  in any browser — no installation needed. It animates a complete graph of agents: each
+  <strong>node</strong> is an agent whose beliefs cycle on an SO(2) manifold (rupturing at
+  2π), each <strong>edge</strong> is a Markov blanket with bistable Z₂ dynamics (flipping
+  at π). You can watch the gain–frequency trade-off (many small sensory updates vs. few
+  large prior updates), turn up an entrainment slider to see the 2:1 frequency ratio
+  collapse to 1:1 in a synchronisation phase transition, and explore what changes at
+  scale — including the quadratic wall and Dunbar's number.</p>
+  <a class="dl" href="human_networks%20(2).html">Open the simulation</a>
+  <a class="dl" href="https://www.temporalgrammar.ai/human_networks.html">Live version at temporalgrammar.ai</a>
+
+  <h2><span class="tag">Pre-print</span>The Boundary is a Rate</h2>
+  <p><em>"The Boundary is a Rate: Coherence–Rupture–Regeneration as a Temporal Physics of
+  Emptiness Realisation"</em> (pre-print, 18 pages). A response to Sandved-Smith, Fields,
+  Doctor, Laukkonen &amp; Hohwy's result that no finite system can evidence its own
+  boundary. The paper accepts that result and asks what survives it when the
+  self/environment boundary is read not as a static holographic screen but as a
+  <strong>rate</strong> — the moving locus at which accumulated Fisher information
+  saturates the Cramér–Rao bound (C&nbsp;·&nbsp;Ω&nbsp;=&nbsp;1). It embeds CRR's
+  equations in the quantum-reference-frame formalism and relocates "emptiness" from an
+  epistemic limit on measurement to an ontological claim about a present with no content
+  of its own. All results are consistency demonstrations under a chosen formalism, not
+  empirical findings.</p>
+  <a class="dl" href="boundary_paper%20(pre-print).pdf">Read the pre-print (PDF)</a>
+
+  <h2><span class="tag">Code</span>Reproduction suite for the pre-print</h2>
+  <p>A deterministic, self-auditing script that regenerates every figure and headline
+  number in the boundary paper. It is built for <strong>audit rather than trust</strong>:
+  every surrogate is anchored to a specific equation in a claim ledger, carries an
+  explicit "evidence ceiling" stating what must <em>not</em> be inferred from it, includes
+  positive and null controls, and passes through validation gates with declared tolerance
+  bands. Fixed seeds and figure hashes make a clean run byte-stable. Run
+  <code>python3 boundary.py</code> to regenerate all PNGs, print the claim ledger, and
+  write <code>results.json</code>.</p>
+  <a class="dl" href="boundary.py" download>Download boundary.py</a>
+
+  <h2><span class="tag">Listen</span>Audio discussions</h2>
+  <p>Two accessible, conversational audio overviews of the ideas — good for listening on
+  the journey home from the conference.</p>
+  <div class="audio-item">
+    <strong>Why AGI Needs Rhythmic Partners</strong> — a discussion of the AGI 2026
+    paper's themes: temporal grammar, phase-gating, and why the <em>timing</em> of belief
+    updates (not just their magnitude) matters for AGI architectures.
+    <audio controls preload="none" src="Why%20AGI%20Needs%20Rhythmic%20Partners.mp3"></audio>
+  </div>
+  <div class="audio-item">
+    <strong>Why perfect technology stunts the self</strong> — a discussion of the
+    boundary paper's themes: rupture as a feature rather than a failure, and why systems
+    that never break may never genuinely learn or grow.
+    <audio controls preload="none" src="Why%20perfect%20technology%20stunts%20the%20self.mp3"></audio>
+  </div>
+
+  <h2><span class="tag">Related reading</span>A Place to Behold and Be Held</h2>
+  <p><a href="https://www.space-zero.org/blog/a-place-to-behold-and-be-held.html">
+  <em>A Place to Behold and Be Held — A Spring in Crescent City</em></a>
+  (Emergent Stories No.&nbsp;01, Blog Zero, <a href="https://www.space-zero.org">Space Zero</a>).</p>
+  <p>A personal essay telling the story behind this research: how a child development
+  lecturer from the Isle of Wight came to spend Spring 2026 in Crescent City, California —
+  hosted by Daniel Friedman and the Active Inference Institute / Space Zero community,
+  where the world's tallest forest meets the Pacific — and learned midway through the stay
+  that the phase-gating paper had been accepted for AGI 2026. The essay connects two
+  decades of practising and teaching child development (Winnicott's <em>holding</em>,
+  Reggio Emilia's environment as "third teacher", the serious business of play) to the
+  questions in these papers: a mind that is held can reach further back into its history
+  and further out into what it might become, and a self is "less a wall than a living
+  edge, remade in every meeting."</p>
+
+  <footer>
+    <p>These materials live in the <a href="https://github.com/alexsabine/honami/tree/main/papers">papers folder</a>
+    of the <a href="https://www.honami.co.uk">Honami</a> site repository
+    (a <a href="README.md">plain-text README</a> version of this page is there too).</p>
+    <p>Questions and conversations welcome:
+    <a href="mailto:Alexander@activeinference.institute">Alexander@activeinference.institute</a> ·
+    <a href="https://www.honami.co.uk">honami.co.uk</a> ·
+    <a href="https://www.temporalgrammar.ai">temporalgrammar.ai</a></p>
+  </footer>
+
+</div>
+</body>
+</html>
