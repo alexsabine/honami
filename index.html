@@ -311,7 +311,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   <figure class="plate" id="hero">
     <div id="grainbox"><canvas id="grain" role="img" aria-label="A field of ripening grain in low golden light. Gusts of wind cross it as slow waves, each one bending the ears so they catch the sun."></canvas></div>
     <figcaption class="cap"><span><em>Honami</em>: waves moving across a field of ripening grain.</span>
-      <span class="toggle" role="group" aria-label="The field"><button type="button" id="isStill" aria-pressed="false">Still</button><button type="button" id="isWind" aria-pressed="true">Wind</button></span></figcaption>
+      <span class="toggle" role="group" aria-label="The field"><button type="button" id="isStill" aria-pressed="false">Still</button><button type="button" id="isBreeze" aria-pressed="false">Breeze</button><button type="button" id="isWind" aria-pressed="true">Wind</button><button type="button" id="isGale" aria-pressed="false">Gale</button></span></figcaption>
   </figure>
 </div>
 
@@ -384,38 +384,28 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
       </div>
     </div>
 
-    <div class="two top-align rise" style="margin-top:clamp(34px,6vw,60px);border-top:1px solid var(--leaf);padding-top:clamp(20px,3vw,30px)">
-      <div>
-        <p class="caps">In development · Del Norte County, California</p>
-        <h3 style="font-size:clamp(30px,4vw,42px)">Crescent Compass</h3>
-        <div class="row"><a class="btn" href="https://crescentcompass.org" target="_blank" rel="noopener">crescentcompass.org</a></div>
-      </div>
-      <div>
-        <p>A mobile-first community map, events noticeboard and resource directory for families and caregivers, built for a local sponsor.</p>
-        <p>Human-verified listings, moderated editing and an accessibility review. A manual and staff training, so the organisation owns and runs it. Its own data-governance and privacy plan: no data is collected about children.</p>
-        <p style="margin-bottom:0">It applies my doctoral research on participatory mapping.</p>
-      </div>
-    </div>
-
-    <ul class="links">
+    <ul class="links" style="margin-top:clamp(30px,5vw,52px)">
+      <li class="rise"><a href="https://crescentcompass.org" target="_blank" rel="noopener">
+        <span><b>Crescent Compass</b><small>In development · Del Norte County, California</small></span>
+        <span><span class="d">A mobile-first community map, events noticeboard and resource directory for families and caregivers, built for a local sponsor. Human-verified listings, moderated editing, an accessibility review, a manual and staff training, and its own data-governance and privacy plan: no data is collected about children. It puts my doctoral research on participatory mapping to work.</span><span class="go">crescentcompass.org →</span></span></a></li>
       <li class="rise"><a href="https://activeinference.org/" target="_blank" rel="noopener">
         <span><b>Active Inference Institute</b><small>Board of Directors · 2026 to present</small></span>
-        <span><span class="d">A voluntary seat on the board of the open-science 501(c)(3). I built its public website and a library of interactive teaching simulations.</span><span class="go">activeinference.org →</span></span></a></li>
+        <span><span class="d">A voluntary seat on the board of the open-science 501(c)(3). I built its public website and a library of fifteen interactive teaching simulations, co-wrote its working-groups and roadmapping paper for the Applied Active Inference Symposium, and helped organise and spoke at <em>Thriving in the Extremes</em>, a session of the Conference on Complex Systems 2026.</span><span class="go">activeinference.org →</span></span></a></li>
       <li class="rise"><a href="https://www.space-zero.org" target="_blank" rel="noopener">
         <span><b>Space Zero</b><small>Website and Development Lead · 2026 to present</small></span>
-        <span><span class="d">A contemplative practice centre in Crescent City, California, and a 501(c)(3). I built the site, forms that write to the organisation’s own Google Workspace, and a plain-language editing guide for staff.</span><span class="go">space-zero.org →</span></span></a></li>
+        <span><span class="d">A contemplative practice centre in Crescent City, California, and a 501(c)(3). I built the site, with mailing-list, membership and blog forms that write to the organisation’s own Google Workspace, and wrote a plain-language guide so staff can edit it themselves, from a phone if need be. I also help with stakeholder planning, communications and its long-term vision for learning.</span><span class="go">space-zero.org →</span></span></a></li>
       <li class="rise"><a href="https://www.temporalgrammar.ai" target="_blank" rel="noopener">
         <span><b>Temporal Grammar</b><small>Simulation design · research</small></span>
-        <span><span class="d">My showcase. A walk-through Museum of art and science, two short films in clay, a clay studio you can work in, and the research papers.</span><span class="go">temporalgrammar.ai →</span></span></a></li>
+        <span><span class="d">My showcase. A walk-through Museum of art and science, films in clay, a workshop of simulations made to be handled, from a leaf in the sun to a hive, and the research papers behind them.</span><span class="go">temporalgrammar.ai →</span></span></a></li>
       <li class="rise"><a href="https://www.somewhensurvivalsociety.org/" target="_blank" rel="noopener">
         <span><b>The Somewhen Survival Society</b><small>Web · Isle of Wight</small></span>
-        <span><span class="d">An immersive theatre and folklore collective. A multi-page site for an Arts Council England-funded piece of living folklore: film, an unfolding mythology, and a season of performances and foraging walks.</span><span class="go">somewhensurvivalsociety.org →</span></span></a></li>
+        <span><span class="d">An immersive theatre and folklore collective. A multi-page site for an Arts Council England-funded piece of living folklore, part of the <em>Can You Hear Us?</em> festival: film, an unfolding mythology, and a season of performances and foraging walks, gathered into one home for the project.</span><span class="go">somewhensurvivalsociety.org →</span></span></a></li>
       <li class="rise"><a href="https://sites.google.com/view/oursmallworld" target="_blank" rel="noopener">
         <span><b>Our Small World</b><small>Partnership · British Council</small></span>
-        <span><span class="d">A research partnership with the University of Surabaya and primary schools in the UK and Indonesia, on Education for Sustainable Development. Partnership stewardship, web architecture and CPD design.</span><span class="go">View the project →</span></span></a></li>
+        <span><span class="d">A cross-cultural research partnership with the University of Surabaya and primary schools in the UK and Indonesia, on Education for Sustainable Development through child-centred and outdoor pedagogies. Partnership stewardship, web architecture and CPD design, with two published outputs.</span><span class="go">View the project →</span></span></a></li>
       <li class="rise"><div class="nolink">
         <span><b>Happy Mappy</b><small>Participatory mapping · Ryde</small></span>
-        <span><span class="d">A participatory mapping tool for the community of Ryde, Isle of Wight, from my doctoral research.</span></span></div></li>
+        <span><span class="d">A participatory mapping tool made with the community of Ryde, Isle of Wight, at the centre of my doctoral research. It led to five tests of a good community map: accuracy, dynamism, accessibility, democratic participation and affect. I went on to advise Ryde Town Council on civic mapping.</span></span></div></li>
     </ul>
   </div>
 </section>
@@ -605,7 +595,9 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   '}'].join('\n');
 
   var COMMON=[
-  'uniform float uT; uniform vec2 uRes; uniform float uF,uHor,uAsp,uZF;',
+  'uniform float uT; uniform vec2 uRes; uniform float uF,uHor,uAsp,uZF; uniform float uS,uPk; uniform vec2 uP,uQ;',
+  // a gust of the visitor's own: strongest under the pointer, with a wake that follows it
+  'float touch(vec2 q){ vec2 a=(q-uP)*vec2(uAsp,1.0), b=(q-uQ)*vec2(uAsp,1.0); return uPk*(exp(-dot(a,a)*16.0)+0.55*exp(-dot(b,b)*9.0)); }',
   'const float CAM=1.55;',                 // eye height above the ground, metres
   'const vec3 GOLD=vec3(0.725,0.525,0.098), LEAF=vec3(0.878,0.682,0.208), PALE=vec3(0.957,0.902,0.722);',
   'const vec3 VIR=vec3(0.051,0.478,0.439), DEEP=vec3(0.039,0.337,0.318), PAPER=vec3(1.0,0.992,0.973);',
@@ -655,7 +647,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   '  if(below>-aa){',
   '    float Z=uF*(CAM-0.90)/max(below,0.0008);',
   '    float X=xa*Z/uF;',
-  '    float g=gust(vec2(X,Z),uT);',
+  '    float g=clamp(gust(vec2(X,Z),uT)*uS+touch(p),0.0,1.0);',
   '    vec3 f=canopy(g);',
   '    float grain=hash2(floor(gl_FragCoord.xy*vec2(1.0,0.45)))-0.5;',
   '    f*=1.0+0.10*grain*smoothstep(260.0,30.0,Z);',
@@ -687,7 +679,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   'void main(){',
   '  float kind=floor(aP.w+0.001), tint=fract(aP.w)/0.9, rnd=aRoot.w;',
   '  float t=aP.x, side=aP.y;',
-  '  float g=gust(aRoot.xy,uT);',
+  '  float g=clamp(gust(aRoot.xy,uT)*uS+touch(proj(vec3(aRoot.x,aRoot.z*0.9,aRoot.y))),0.0,1.0);',
   '  float om=6.2+3.0*rnd;',
   '  float bend=(0.015+0.46*g)*(0.62+0.6*fract(rnd*9.1))+0.035*sin(uT*om+rnd*40.0)*(0.35+g);',
   '  float sw=0.22*sin(uT*om*0.63+rnd*71.0)*(0.3+0.7*g);',
@@ -714,6 +706,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   '    vec3 base=canopy(g)*(0.84+0.26*fract(rnd*5.3))*(0.90+0.16*g);',
   '    base=mix(base,vec3(0.36,0.50,0.22),0.50*tint);',
   '    col=mix(base*0.72,mix(base,vec3(1.0,0.95,0.78),0.30+0.30*g),lit*lit);',
+  '    col+=vec3(1.0,0.93,0.70)*g*g*g*0.20;',
   '  }else{',                           // an awn: a hair of light off the ear
   '    float fan=aP.z; float c=cos(fan), s=sin(fan);',
   '    vec2 d=vec2(tp.x*c-tp.y*s,tp.x*s+tp.y*c);',
@@ -759,7 +752,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   function initGL(){
     gl=cv.getContext('webgl',{antialias:true,alpha:false,powerPreference:'low-power'});
     if(!gl) return false;
-    var names=['uT','uRes','uF','uHor','uAsp','uZF'];
+    var names=['uT','uRes','uF','uHor','uAsp','uZF','uS','uPk','uP','uQ'];
     var a=program(BG_VS,BG_FS,names); progBG=a[0]; uBG=a[1];
     var b=program(ST_VS,ST_FS,names); progST=b[0]; uST=b[1];
     bufBG=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,bufBG);
@@ -825,6 +818,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   function setU(u,t){
     gl.uniform1f(u.uT,t); gl.uniform2f(u.uRes,W,H); gl.uniform1f(u.uF,F);
     gl.uniform1f(u.uHor,HOR); gl.uniform1f(u.uAsp,W/H); gl.uniform1f(u.uZF,ZF);
+    gl.uniform1f(u.uS,sNow); gl.uniform1f(u.uPk,pk); gl.uniform2f(u.uP,px,py); gl.uniform2f(u.uQ,qx,qy);
   }
   function draw(t){
     if(!gl||!built) return;
@@ -843,9 +837,11 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   }
 
   /* ---- running, pausing, and staying smooth ---- */
+  var sNow=1, pk=0, px=0, py=-0.4, qx=0, qy=-0.4;
   var tNow=STILL_T, last=0, raf=0, wind=!reduce, onscreen=true, visible=!document.hidden;
+  var LEVELS={still:[0,1],breeze:[0.55,0.6],wind:[1,1],gale:[1.7,1.32]}, rate=wind?1:0, sWant=1, pkWant=0, pActive=0;
   var slow=0, frames=0, downgrades=0;
-  function shouldRun(){ return wind&&onscreen&&visible&&built; }
+  function shouldRun(){ return (wind||pk>0.004||pkWant>0)&&onscreen&&visible&&built; }
   function frame(now){
     raf=0;
     if(!shouldRun()) return;
@@ -858,19 +854,26 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
         frames=0; slow=0;
       }
     }
-    tNow+=dt;
+    sNow+=(sWant-sNow)*Math.min(1,dt*1.6);
+    if(pkWant>0&&performance.now()-pActive>900) pkWant=0;                // the visitor's gust dies away when the hand stops
+    pk+=(pkWant-pk)*Math.min(1,dt*(pkWant>pk?5:1.1)); qx+=(px-qx)*Math.min(1,dt*2.2); qy+=(py-qy)*Math.min(1,dt*2.2);
+    tNow+=dt*(wind?rate:0.35*pk);
     draw(tNow);
     raf=requestAnimationFrame(frame);
   }
   function kick(){ if(shouldRun()&&!raf){ last=0; raf=requestAnimationFrame(frame); } }
-  function setWind(on){
-    wind=on;
-    bWind.setAttribute('aria-pressed',on?'true':'false');
-    bStill.setAttribute('aria-pressed',on?'false':'true');
-    if(on) kick(); else if(built) draw(tNow);
+  var levelBtns={still:bStill,breeze:document.getElementById('isBreeze'),wind:bWind,gale:document.getElementById('isGale')};
+  function setLevel(name){
+    var L=LEVELS[name]; wind=name!=='still'; if(wind){ rate=L[0]; sWant=L[1]; }
+    for(var k in levelBtns) if(levelBtns[k]) levelBtns[k].setAttribute('aria-pressed',k===name?'true':'false');
+    if(wind) kick(); else if(built) draw(tNow);
   }
-  bStill.addEventListener('click',function(){ setWind(false); });
-  bWind.addEventListener('click',function(){ setWind(true); });
+  function setWind(on){ setLevel(on?'wind':'still'); }
+  for(var lk in levelBtns) if(levelBtns[lk]) (function(n){ levelBtns[n].addEventListener('click',function(){ setLevel(n); }); })(lk);
+  /* run a hand through it: a gust follows the pointer and trails behind */
+  function touchAt(e){ if(reduce) return; var r=cv.getBoundingClientRect(); px=((e.clientX-r.left)/r.width)*2-1; py=1-((e.clientY-r.top)/r.height)*2; if(pkWant===0&&pk<0.02){ qx=px; qy=py; } pkWant=0.9; pActive=performance.now(); kick(); }
+  cv.addEventListener('pointermove',touchAt,{passive:true}); cv.addEventListener('pointerdown',touchAt,{passive:true});
+  cv.addEventListener('pointerleave',function(){ pkWant=0; });
 
   function start(){
     try{ if(!initGL()) return fallback(); buildField(); }
