@@ -1,12 +1,12 @@
 {
   "name": "Honami",
   "short_name": "Honami",
-  "description": "A UK consultancy for human + AI alignment and change.",
+  "description": "Alexander Sabine, trading as Honami: technology and education for small organisations.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#f4f1e9",
-  "theme_color": "#f4f1e9",
+  "background_color": "#fffdf8",
+  "theme_color": "#fffdf8",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },

@@ -1,15 +1,20 @@
 # Honami
 
-The website for **Honami** — a UK consultancy working at the meeting point of
-contemplative practice, complex-systems science, and the craft of building
-technology.
+The personal, self-employed profile of **Alexander Sabine, trading as Honami**
+(a UK sole trader): technology and education for small, mission-driven
+organisations. It is the sister page of his showcase, <https://www.temporalgrammar.ai>,
+and shares its look (paper white, blue-black ink, gold and viridian, IM Fell
+English and Source Serif 4, square corners, hairline "plates").
 
 **Live site:** https://www.honami.co.uk/
 
 It is a single, self-contained `index.html`: no build step, no framework, no
-dependencies. The hero is an animated HTML5 canvas (the word *Honami* rendered as
-wind moving across a field of grain). Everything — markup, styles, and the canvas
-engine — lives in that one file. Fonts are loaded from Google Fonts.
+dependencies. The hero is a small WebGL picture of what *honami* means: waves of
+wind moving across a field of ripening grain. It pauses off screen, shows a still
+when the visitor prefers reduced motion (or presses **Still**), and falls back to
+a plain gradient without WebGL. Everything — markup, styles, and the grain — lives
+in that one file. Fonts are loaded from Google Fonts, and one picture in the
+showcase section is loaded from temporalgrammar.ai.
 
 ---
 
@@ -17,7 +22,7 @@ engine — lives in that one file. Fonts are loaded from Google Fonts.
 
 | File | Purpose |
 | --- | --- |
-| `index.html` | The entire website (markup, CSS, and the canvas animation). |
+| `index.html` | The entire website (markup, CSS, and the grain animation). |
 | `CNAME` | Tells GitHub Pages to serve the site at `www.honami.co.uk`. |
 | `robots.txt` | Welcomes search-engine crawlers and points to the sitemap. |
 | `sitemap.xml` | Lists the site's one page so search engines can find it. |
@@ -76,16 +81,16 @@ anywhere from a few minutes to a day to take effect.)
 The bulk of the SEO work lives inside the `<head>` of `index.html`:
 
 - **Descriptive `<title>` and meta description** — the two things Google shows in a
-  search result. Written to read naturally and contain the key terms (UK
-  consultancy, human + AI alignment, change).
+  search result. Written to read naturally and contain the key terms (Alexander
+  Sabine, Honami, technology and education for small organisations).
 - **Canonical URL** (`https://www.honami.co.uk/`) — tells search engines this is the
   one true address, so the `www` and apex versions aren't treated as duplicates.
 - **Open Graph and Twitter Card tags** — control the title, description, and preview
   image when the link is pasted into LinkedIn, Slack, WhatsApp, iMessage, X, etc.
   The preview image is `og-image.png`.
 - **JSON-LD structured data** — a small machine-readable block describing the
-  business (`ProfessionalService`), the person (`Alexander Sabine`, with ORCID), and
-  the website. This helps search engines understand what the site *is* and can
+  sole-trader business (`ProfessionalService`), the person (`Alexander Sabine`, with
+  ORCID), and the website. This helps search engines understand what the site *is* and can
   enable richer search results.
 - **Favicons and web manifest** — the tab icon and the metadata used if someone adds
   the site to a phone home-screen.
@@ -119,8 +124,10 @@ service:
 
 Everything is in `index.html`. Search for the section you want inside the file —
 the major blocks are marked with comments such as `<!-- ================= ENQUIRE
-================= -->`. The colour palette is defined once at the top of the
-`<style>` block in the `:root` variables.
+================= -->` (opening, approach, showcase, work, voices, about, enquire).
+The colour palette is defined once at the top of the `<style>` block in the `:root`
+variables. The grain is the single `<script>` at the end of the file; its wind
+model is the `gust` function at the top of that script.
 
 If you change the **page copy**, no other files need updating. If you change the
 **preview image**, replace `og-image.png` (keep it 1200×630) and re-run the share
