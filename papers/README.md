@@ -12,7 +12,7 @@ an interactive simulation, a companion pre-print, and two audio discussions.
 
 **Author:** Alexander Sabine — Independent Researcher, Active Inference Institute
 · [temporalgrammar.ai](https://www.temporalgrammar.ai) ·
-Alexander@activeinference.institute
+info@honami.co.uk
 
 ---
 
@@ -163,4 +163,4 @@ including this AGI 2026 paper, and contact details.
    [*A Place to Behold and Be Held*](https://www.space-zero.org/blog/a-place-to-behold-and-be-held.html)
    on Space Zero's blog.
 
-Questions and conversations welcome: Alexander@activeinference.institute
+Questions and conversations welcome: info@honami.co.uk
