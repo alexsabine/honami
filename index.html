@@ -125,7 +125,7 @@ a:hover{color:var(--goldtext)}
 .skip{position:absolute;left:-999px;top:8px;z-index:30;background:var(--ink);color:#fff;padding:16px 16px;font:400 15px/1 var(--caps);letter-spacing:.08em}
 .skip:focus{left:8px;color:#fff}
 h1,h2,h3{font-family:var(--fell);font-weight:400;letter-spacing:-.005em;text-wrap:balance;margin:0}
-h1{font-size:clamp(46px,9vw,100px);line-height:.96}
+h1{font-size:clamp(46px,9vw,100px);line-height:.96}h1 .h1ball{display:inline-block;width:.72em;height:.72em;margin-left:.22em;vertical-align:-.06em}
 h2{font-size:clamp(34px,5.4vw,58px);line-height:1.02}
 h2 em,h1 em{color:var(--viridian)}
 h3{font-size:clamp(24px,2.8vw,30px);line-height:1.15}
@@ -281,7 +281,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
 
 <header class="top">
   <div class="wrap">
-    <a class="name" href="#top">Honami<img class="ball" src="ball.png" alt="" width="28" height="28"></a>
+    <a class="name" href="#top"><img class="ball" src="ball.png" alt="" width="28" height="28">Honami</a>
     <nav aria-label="On this page">
       <a href="#approach">Approach</a>
       <a href="#work">Work</a>
@@ -299,7 +299,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   <div class="wrap grid">
     <div>
       <p class="caps">Trading as Honami · UK sole trader</p>
-      <h1>Alexander Sabine</h1>
+      <h1>Alexander Sabine<img class="h1ball" src="ball-lg.png" alt="" width="96" height="96"></h1>
     </div>
     <div>
       <p class="lead">I help small, mission-driven organisations adopt technology they can run themselves.</p>
@@ -310,8 +310,8 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
 
 <div class="wrap">
   <figure class="plate" id="hero">
-    <div id="grainbox"><canvas id="grain" role="img" aria-label="A painting of the Isle of Wight Festival, drawn as a field of fine upright strokes: a hill of tents, an arena full of people. Gusts of wind cross it as slow waves, bending the strokes so they catch the sun, as they would in a field of grain."></canvas></div>
-    <figcaption class="cap"><span><em>Honami</em>: waves moving across a field of ripening grain. Here the field is the Isle of Wight Festival, after a painting.</span>
+    <div id="grainbox"><canvas id="grain" role="img" aria-label="A soft, stylised hillside in green and gold, drawn as a field of fine upright strokes, with a dark crowded arena at its centre. Gusts of wind cross the hillside as slow pale waves. In the arena, rings of gold light spread through the crowd from a single bright point at the stage, one to each beat."></canvas></div>
+    <figcaption class="cap"><span><em>Honami</em>: waves moving across a field of ripening grain. Here the field is a crowd on an island hillside: the wind crosses the grass, and the sound crosses the people.</span>
       <span class="toggle" role="group" aria-label="The field"><button type="button" id="isStill" aria-pressed="false">Still</button><button type="button" id="isBreeze" aria-pressed="false">Breeze</button><button type="button" id="isWind" aria-pressed="true">Wind</button><button type="button" id="isGale" aria-pressed="false">Gale</button></span></figcaption>
   </figure>
 </div>
@@ -573,7 +573,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   var box=document.getElementById('grainbox'), cv=document.getElementById('grain');
   var bStill=document.getElementById('isStill'), bWind=document.getElementById('isWind');
   var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var STILL_T=7.4, SRC='festival-field.jpg', ASPECT=1280/753;
+  var STILL_T=7.4, SRC='festival-field.jpg?v=2', ASPECT=1280/753;
 
   /* ---- the model, in plain JS (for tests, and to mirror the shader) ---- */
   var WIND=[-0.853,-0.522], SPEED=1.15;
@@ -603,22 +603,38 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   '  return clamp(g,0.0,1.0);',
   '}',
   'float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }',
-  'const float PA='+ASPECT.toFixed(4)+';',                         // the painting is this many times wider than tall
-  'float horizon(float x){ return 0.305-0.085*smoothstep(0.25,1.0,x); }',   // where the ground ends in the painting: the far downs on the left, the hill of tents on the right
+  'float vnoise(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(hash(i),hash(i+vec2(1.0,0.0)),f.x),mix(hash(i+vec2(0.0,1.0)),hash(i+vec2(1.0,1.0)),f.x),f.y); }',
+  'const float PA='+ASPECT.toFixed(4)+';',
+  'float horizon(float x){ return 0.305-0.085*smoothstep(0.25,1.0,x); }',
   'const float NR=92.0, EXPO=0.55;',
+  // the colours of the place, carried over into this site's own: ink, viridian, gold, cream. Enough of the first hue is kept for those who know it.
+  'vec3 tone(vec3 c){ float l=dot(c,vec3(0.30,0.59,0.11));',
+  '  vec3 p=mix(vec3(0.05,0.13,0.14),vec3(0.05,0.42,0.38),smoothstep(0.05,0.36,l));',
+  '  p=mix(p,vec3(0.89,0.70,0.26),smoothstep(0.30,0.62,l)); p=mix(p,vec3(0.99,0.96,0.86),smoothstep(0.58,0.92,l));',
+  '  return mix(c,p,0.62); }',
+  'float edge(vec2 p,vec2 a,vec2 b){ vec2 e=b-a; return dot(p-a,vec2(e.y,-e.x))/length(e); }',
+  'float arena(vec2 p){',                                             // the packed ground in front of the stage
+  '  float d1=edge(p,vec2(0.125,0.514),vec2(0.735,0.425)), d2=edge(p,vec2(0.735,0.425),vec2(0.620,0.654)), d3=edge(p,vec2(0.620,0.654),vec2(0.190,0.544)), d4=edge(p,vec2(0.190,0.544),vec2(0.125,0.514));',
+  '  float m=max(min(min(d1,d2),min(d3,d4)),min(min(-d1,-d2),min(-d3,-d4))); return smoothstep(-0.004,0.020,m); }',
+  'const vec2 STAGE=vec2(0.672,0.545);',
+  'vec2 ground(vec2 p){ float d=max(0.0,(p.y-horizon(p.x))/(1.0-horizon(p.x))); return vec2((p.x*PA-0.80*PA)/(d+0.10)*3.2,7.5/(d+0.10)); }',
   'void main(){',
   '  vec2 uv=vec2(gl_FragCoord.x/uRes.x,1.0-gl_FragCoord.y/uRes.y);',
-  // cover-fit the painting in the box, keeping the arena and the crowd in view
   '  vec2 tc=uv; if(uAsp>PA){ float s=PA/uAsp; tc.y=0.60+(uv.y-0.56)*s; } else { float s=uAsp/PA; tc.x=0.47+(uv.x-0.5)*s; }',
-  '  vec3 paint=texture2D(uTex,tc).rgb;',
-  '  float yh=horizon(tc.x); float d=(tc.y-yh)/(1.0-yh);',           // 0 at the horizon, 1 at the foot of the picture
-  '  vec3 col=paint;',
+  '  vec3 paint=tone(texture2D(uTex,tc).rgb);',
+  '  float yh=horizon(tc.x); float d=(tc.y-yh)/(1.0-yh);',
+  '  float live=clamp(uS*1.4+uPk,0.0,1.0);',
+  // the sky: washed, with slow weather going over
+  '  float cl=vnoise(vec2(tc.x*3.0+uT*0.02,tc.y*7.0))*0.6+vnoise(vec2(tc.x*9.0-uT*0.03,tc.y*18.0))*0.4;',
+  '  vec3 sky=mix(vec3(0.97,0.93,0.82),vec3(0.80,0.86,0.82),smoothstep(0.35,0.75,cl)); sky=mix(sky,paint,0.35);',
+  '  vec3 col=mix(sky,paint,smoothstep(-0.02,0.03,d));',
+  '  vec2 Gs=ground(STAGE); float beat=0.5+0.5*sin(uT*2.6);',
   '  if(d>0.0){',
   '    float gr=smoothstep(0.0,0.06,d);',
-  '    col=mix(paint,paint*0.84,gr);',                              // the ground between the strokes sits a little in their shade
+  '    col=mix(col,paint*0.84,gr);',
   '    float X=tc.x*PA; float Rp=pow(d,EXPO)*NR; float base=floor(Rp); float pxw=(uAsp>PA?PA:uAsp)/uRes.x*0.9;',
   '    vec2 q=(uQ*0.5+0.5); q.y=1.0-q.y;',
-  '    for(int j=0;j<=4;j++){',                                      // rows rooted below this pixel, far to near: nearer strokes paint over farther ones
+  '    for(int j=0;j<=4;j++){',
   '      float ri=base+float(j); float di=pow(ri/NR,1.0/EXPO); if(di>1.25) continue;',
   '      float yi=yh+(1.0-yh)*di;',
   '      float hb=mix(0.010,0.078,pow(clamp(di,0.0,1.0),1.25))*(0.85+0.3*hash(vec2(ri,7.0)));',
@@ -627,27 +643,36 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   '      float c0=floor(X/cw+off);',
   '      for(int k=-1;k<=1;k++){',
   '        float ci=c0+float(k); float rnd=hash(vec2(ci,ri)); float rnd2=hash(vec2(ri,ci)+11.0);',
-  '        float xr=(ci-off+0.2+0.6*rnd)*cw; float yj=yi+(rnd2-0.5)*sp*0.95; float fy=(yj-tc.y)/hb; if(fy<0.0||fy>1.0) continue;',
+  '        float xr=(ci-off+0.2+0.6*rnd)*cw; float yj=yi+(rnd2-0.5)*sp*0.95;',
   '        vec2 rootTc=vec2(xr/PA,yj-hb*0.15);',
-  '        vec2 G=vec2((xr-0.80*PA)/(di+0.10)*3.2,7.5/(di+0.10));',   // where this root stands on the ground, in rough metres
-  '        float g=gust(G,uT)*uS;',
+  '        vec2 G=vec2((xr-0.80*PA)/(di+0.10)*3.2,7.5/(di+0.10));',
+  // in the arena the field is people, and what moves them is the sound: rings going out from the stage, one to each beat
+  '        float am=arena(rootTc); float ds=length(G-Gs);',
+  '        float ring=pow(max(0.0,sin(ds*0.55-uT*2.6)),5.0)*exp(-ds*0.028)*am*live;',
+  '        float hbE=hb*(1.0+0.42*ring);',
+  '        float fy=(yj-tc.y)/hbE; if(fy<0.0||fy>1.0) continue;',
+  '        float g=gust(G,uT)*uS*(1.0-0.75*am);',                     // elsewhere it is the wind
   '        vec2 ruv=rootTc; if(uAsp>PA){ ruv.y=0.56+(rootTc.y-0.60)*uAsp/PA; } else { ruv.x=0.5+(rootTc.x-0.47)*PA/uAsp; }',
-  '        float dq=distance(ruv*vec2(uAsp,1.0),q*vec2(uAsp,1.0)); g+=uPk*exp(-dq*dq/0.018);',   // a hand run through it
+  '        float dq=distance(ruv*vec2(uAsp,1.0),q*vec2(uAsp,1.0)); g+=uPk*exp(-dq*dq/0.018);',
   '        g=clamp(g,0.0,1.6);',
   '        float lean=-(g*0.95+0.05*sin(uT*2.3+rnd*6.283)*(0.3+g))*hb*(0.75+0.5*rnd2);',
   '        float xc=xr+lean*pow(fy,1.6);',
-  '        float hw=cw*mix(0.24,0.06,fy)+cw*0.24*smoothstep(0.58,0.78,fy)*(1.0-smoothstep(0.90,1.0,fy));',   // a stem, and a fuller head near the tip
+  '        float hw=cw*mix(0.24,0.06,fy)+cw*0.24*smoothstep(0.58,0.78,fy)*(1.0-smoothstep(0.90,1.0,fy));',
   '        float a=(1.0-smoothstep(hw-pxw,hw+pxw,abs(X-xc)))*(1.0-smoothstep(0.93,1.0,fy))*smoothstep(0.0,0.04,fy); if(a<=0.0) continue;',
-  '        vec3 cb=texture2D(uTex,rootTc).rgb;',
-  '        vec3 st=cb*mix(0.64,1.12,fy);',                           // in its own shade at the root, lit at the tip
-  '        st+=vec3(1.0,0.92,0.70)*(g*0.46*smoothstep(0.25,1.0,fy));',  // bent, the head turns its flank to the low sun
-  '        st=mix(st,cb,0.15);',
-  '        col=mix(col,st,a*gr*0.9*uQual);',
+  '        vec3 cb=tone(texture2D(uTex,rootTc).rgb); cb*=0.90+0.22*rnd;',                 // each stroke its own slight shade
+  '        vec3 st=cb*mix(0.62,1.12,fy);',
+  '        st+=vec3(1.0,0.92,0.70)*(g*0.46*smoothstep(0.25,1.0,fy));',
+  '        st+=vec3(1.0,0.82,0.40)*(ring*1.05*smoothstep(0.15,1.0,fy));',                   // the ring passing: heads lifted, lit gold
+  '        col=mix(col,st,a*gr*0.92*uQual);',
   '      }',
   '    }',
   '  }',
+  // the performer: one warm point at the stage, brighter on the beat
+  '  vec2 sv=(tc-STAGE)*vec2(PA,1.0); float sd=dot(sv,sv);',
+  '  col+=vec3(1.0,0.78,0.34)*live*(0.22+0.30*beat)*exp(-sd/0.00035)+vec3(1.0,0.82,0.45)*live*(0.05+0.06*beat)*exp(-sd/0.006);',
   '  float vg=smoothstep(1.25,0.35,length((uv-0.5)*vec2(1.0,0.9)));',
-  '  col*=mix(0.86,1.0,vg); col+=vec3(0.05,0.035,0.0)*(1.0-uv.y)*0.5;',  // a little warmth from the low sun
+  '  col*=mix(0.84,1.0,vg); col+=vec3(0.05,0.035,0.0)*(1.0-uv.y)*0.5;',
+  '  float grain=hash(gl_FragCoord.xy+fract(uT)*37.0)-0.5; col+=grain*0.018;',
   '  gl_FragColor=vec4(col,1.0);',
   '}'].join('\n');
 
