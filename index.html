@@ -573,7 +573,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   var box=document.getElementById('grainbox'), cv=document.getElementById('grain');
   var bStill=document.getElementById('isStill'), bWind=document.getElementById('isWind');
   var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var STILL_T=7.4, SRC='festival-field.jpg?v=2', ASPECT=1280/753;
+  var STILL_T=7.4, SRC='festival-field.jpg?v=3', ASPECT=1280/753;
 
   /* ---- the model, in plain JS (for tests, and to mirror the shader) ---- */
   var WIND=[-0.853,-0.522], SPEED=1.15;
@@ -611,7 +611,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   'vec3 tone(vec3 c){ float l=dot(c,vec3(0.30,0.59,0.11));',
   '  vec3 p=mix(vec3(0.05,0.13,0.14),vec3(0.05,0.42,0.38),smoothstep(0.05,0.36,l));',
   '  p=mix(p,vec3(0.89,0.70,0.26),smoothstep(0.30,0.62,l)); p=mix(p,vec3(0.99,0.96,0.86),smoothstep(0.58,0.92,l));',
-  '  return mix(c,p,0.62); }',
+  '  return mix(c,p,0.34); }',
   'float edge(vec2 p,vec2 a,vec2 b){ vec2 e=b-a; return dot(p-a,vec2(e.y,-e.x))/length(e); }',
   'float arena(vec2 p){',                                             // the packed ground in front of the stage
   '  float d1=edge(p,vec2(0.125,0.514),vec2(0.735,0.425)), d2=edge(p,vec2(0.735,0.425),vec2(0.620,0.654)), d3=edge(p,vec2(0.620,0.654),vec2(0.190,0.544)), d4=edge(p,vec2(0.190,0.544),vec2(0.125,0.514));',
@@ -621,12 +621,13 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   'void main(){',
   '  vec2 uv=vec2(gl_FragCoord.x/uRes.x,1.0-gl_FragCoord.y/uRes.y);',
   '  vec2 tc=uv; if(uAsp>PA){ float s=PA/uAsp; tc.y=0.60+(uv.y-0.56)*s; } else { float s=uAsp/PA; tc.x=0.47+(uv.x-0.5)*s; }',
-  '  vec3 paint=tone(texture2D(uTex,tc).rgb);',
+  '  vec3 raw=texture2D(uTex,tc).rgb; vec3 paint=tone(raw);',
   '  float yh=horizon(tc.x); float d=(tc.y-yh)/(1.0-yh);',
   '  float live=clamp(uS*1.4+uPk,0.0,1.0);',
   // the sky: washed, with slow weather going over
   '  float cl=vnoise(vec2(tc.x*3.0+uT*0.02,tc.y*7.0))*0.6+vnoise(vec2(tc.x*9.0-uT*0.03,tc.y*18.0))*0.4;',
-  '  vec3 sky=mix(vec3(0.97,0.93,0.82),vec3(0.80,0.86,0.82),smoothstep(0.35,0.75,cl)); sky=mix(sky,paint,0.35);',
+  '  vec2 sc=vec2(tc.x+0.012*sin(uT*0.05+tc.y*6.0)+uT*0.0016*live,tc.y); vec3 skyp=texture2D(uTex,sc).rgb;',   // the painted clouds, drifting a little
+  '  vec3 sky=mix(vec3(0.97,0.93,0.82),vec3(0.80,0.86,0.82),smoothstep(0.35,0.75,cl)); sky=mix(sky,mix(skyp,tone(skyp),0.18),0.74);',
   '  vec3 col=mix(sky,paint,smoothstep(-0.02,0.03,d));',
   '  vec2 Gs=ground(STAGE); float beat=0.5+0.5*sin(uT*2.6);',
   '  if(d>0.0){',
@@ -660,6 +661,8 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   '        float hw=cw*mix(0.24,0.06,fy)+cw*0.24*smoothstep(0.58,0.78,fy)*(1.0-smoothstep(0.90,1.0,fy));',
   '        float a=(1.0-smoothstep(hw-pxw,hw+pxw,abs(X-xc)))*(1.0-smoothstep(0.93,1.0,fy))*smoothstep(0.0,0.04,fy); if(a<=0.0) continue;',
   '        vec3 cb=tone(texture2D(uTex,rootTc).rgb); cb*=0.90+0.22*rnd;',                 // each stroke its own slight shade
+  '        float people=max(am,smoothstep(0.50,0.80,di)*(1.0-smoothstep(0.30,0.75,rootTc.x)*0.6));',   // the arena, and the near crowd: every one a different colour
+  '        vec3 jit=vec3(hash(vec2(ci,ri)+3.1),hash(vec2(ci,ri)+7.7),hash(vec2(ci,ri)+13.3)); cb=mix(cb,cb*(0.62+0.80*jit)+0.05*(jit-0.5),0.55*people);',
   '        vec3 st=cb*mix(0.62,1.12,fy);',
   '        st+=vec3(1.0,0.92,0.70)*(g*0.46*smoothstep(0.25,1.0,fy));',
   '        st+=vec3(1.0,0.82,0.40)*(ring*1.05*smoothstep(0.15,1.0,fy));',                   // the ring passing: heads lifted, lit gold
