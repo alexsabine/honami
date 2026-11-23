@@ -138,7 +138,7 @@ figure{margin:0}
 /* the rail */
 .top{position:fixed;inset:0 0 auto 0;z-index:20;background:rgba(255,253,248,.9);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid var(--hair);padding-top:env(safe-area-inset-top,0px)}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:14px;height:54px}
-.top .name{font:italic 400 22px/1 var(--fell);color:var(--ink);text-decoration:none;white-space:nowrap;padding:14px 0;min-height:44px;display:inline-flex;align-items:center}
+.top .name{font:italic 400 22px/1 var(--fell);color:var(--ink);text-decoration:none;white-space:nowrap;padding:14px 0;min-height:44px;display:inline-flex;align-items:center;gap:10px}.top .name .ball{width:28px;height:28px;display:block;flex:none}@media (max-width:560px){.top .name{gap:7px}.top .name .ball{width:22px;height:22px}}
 .top nav{display:flex;gap:0;overflow-x:auto;scrollbar-width:none;margin-right:calc(var(--gutter) * -1);padding-right:var(--gutter)}
 .top nav::-webkit-scrollbar{display:none}
 .top nav a{font:400 14.5px/1 var(--caps);letter-spacing:.08em;color:var(--soft);text-decoration:none;padding:0 11px;min-height:46px;min-width:44px;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;border-bottom:2px solid transparent}
@@ -281,7 +281,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
 
 <header class="top">
   <div class="wrap">
-    <a class="name" href="#top">Honami</a>
+    <a class="name" href="#top">Honami<img class="ball" src="ball.png" alt="" width="28" height="28"></a>
     <nav aria-label="On this page">
       <a href="#approach">Approach</a>
       <a href="#work">Work</a>
@@ -310,8 +310,8 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
 
 <div class="wrap">
   <figure class="plate" id="hero">
-    <div id="grainbox"><canvas id="grain" role="img" aria-label="A field of ripening grain in low golden light. Gusts of wind cross it as slow waves, each one bending the ears so they catch the sun."></canvas></div>
-    <figcaption class="cap"><span><em>Honami</em>: waves moving across a field of ripening grain.</span>
+    <div id="grainbox"><canvas id="grain" role="img" aria-label="A painting of the Isle of Wight Festival, drawn as a field of fine upright strokes: a hill of tents, an arena full of people. Gusts of wind cross it as slow waves, bending the strokes so they catch the sun, as they would in a field of grain."></canvas></div>
+    <figcaption class="cap"><span><em>Honami</em>: waves moving across a field of ripening grain. Here the field is the Isle of Wight Festival, after a painting.</span>
       <span class="toggle" role="group" aria-label="The field"><button type="button" id="isStill" aria-pressed="false">Still</button><button type="button" id="isBreeze" aria-pressed="false">Breeze</button><button type="button" id="isWind" aria-pressed="true">Wind</button><button type="button" id="isGale" aria-pressed="false">Gale</button></span></figcaption>
   </figure>
 </div>
@@ -547,33 +547,36 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
 
 <script>
 /* =========================================================================
-   HONAMI: a field of ripening grain, and the wind crossing it.
+   HONAMI: waves moving across a field. Here the field is a festival.
 
-   The model (no drawing) is two small functions, mirrored in GLSL below:
+   The picture underneath is a painting of the Isle of Wight Festival: a hill
+   of tents, an arena packed with people. It is drawn as a field of fine
+   upright strokes, each one rooted at a point on the ground and taking its
+   colour from the painting at its root. Far strokes are small, near ones tall.
+
+   The model is the same as for a field of grain, in two small functions,
+   mirrored in GLSL below:
      gust(X, Z, t)  the wind as a field over the ground: wave trains that
                     travel one way, downwind, with curved fronts and a slow
                     envelope so that gusts arrive in groups;
-     each stalk     is a cantilever rooted at (X, Z). It leans downwind in
-                    proportion to the gust over its root, sways a little at
-                    its own natural frequency, and its heavy ear nods further.
-   The waves you see are the real thing in a real field: bent ears turn their
-   flanks to the low sun and go pale; upright ones stay in their own shade.
+     each stroke    leans downwind in proportion to the gust over its root,
+                    sways a little on its own, and its tip catches the low
+                    sun as it bends, so a passing gust shows as a pale wave.
+   Still, it is the painting. In the wind, the crowd moves like grain.
 
-   Drawing: one WebGL context, two draw calls. A full-frame shader paints the
-   sky, the far downs and the distant canopy. Then every near stalk is a
-   ribbon in one static buffer, sorted far to near, bent in the vertex shader.
-   It pauses off screen and when the tab is hidden, shows a still under
-   prefers-reduced-motion, and thins itself out if frames run slow.
+   Drawing: one WebGL context, one full-frame shader, one small texture.
+   It pauses off screen and when the tab is hidden, and shows a still under
+   prefers-reduced-motion.
    ========================================================================= */
 (function(){
   'use strict';
   var box=document.getElementById('grainbox'), cv=document.getElementById('grain');
   var bStill=document.getElementById('isStill'), bWind=document.getElementById('isWind');
   var reduce=window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var STILL_T=7.4;                       // the moment shown when the field is still
+  var STILL_T=7.4, SRC='festival-field.jpg', ASPECT=1280/753;
 
   /* ---- the model, in plain JS (for tests, and to mirror the shader) ---- */
-  var WIND=[-0.853,-0.522], SPEED=1.15;   // downwind direction on the ground (X, Z); metres a second
+  var WIND=[-0.853,-0.522], SPEED=1.15;
   function gust(X,Z,t){
     var u=X*WIND[0]+Z*WIND[1]-SPEED*t, v=-X*WIND[1]+Z*WIND[0];
     var th=u*0.5+1.5*Math.sin(v*0.11+0.6)+0.7*Math.sin(v*0.29+u*0.06+2.1);
@@ -584,8 +587,10 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
     g=g*(0.25+0.75*e)+0.16*w2*(0.4+0.6*e);
     return Math.max(0,Math.min(1,g));
   }
-
-  var GUST_GLSL=[
+  var VS='attribute vec2 aPos; void main(){ gl_Position=vec4(aPos,0.0,1.0); }';
+  var FS=[
+  '#ifdef GL_FRAGMENT_PRECISION_HIGH','precision highp float;','#else','precision mediump float;','#endif',
+  'uniform sampler2D uTex; uniform vec2 uRes; uniform float uT,uS,uPk,uAsp,uQual; uniform vec2 uQ;',
   'const vec2 WIND=vec2(-0.853,-0.522);',
   'float gust(vec2 P,float t){',
   '  float u=dot(P,WIND)-'+SPEED.toFixed(3)+'*t; float v=dot(P,vec2(-WIND.y,WIND.x));',
@@ -596,270 +601,101 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   '  float g=w*w*(3.0-2.0*w);',
   '  g=g*(0.25+0.75*e)+0.16*w2*(0.4+0.6*e);',
   '  return clamp(g,0.0,1.0);',
-  '}'].join('\n');
-
-  var COMMON=[
-  'uniform float uT; uniform vec2 uRes; uniform float uF,uHor,uAsp,uZF; uniform float uS,uPk; uniform vec2 uP,uQ;',
-  // a gust of the visitor's own: strongest under the pointer, with a wake that follows it
-  'float touch(vec2 q){ vec2 a=(q-uP)*vec2(uAsp,1.0), b=(q-uQ)*vec2(uAsp,1.0); return uPk*(exp(-dot(a,a)*16.0)+0.55*exp(-dot(b,b)*9.0)); }',
-  'const float CAM=1.55;',                 // eye height above the ground, metres
-  'const vec3 GOLD=vec3(0.725,0.525,0.098), LEAF=vec3(0.878,0.682,0.208), PALE=vec3(0.957,0.902,0.722);',
-  'const vec3 VIR=vec3(0.051,0.478,0.439), DEEP=vec3(0.039,0.337,0.318), PAPER=vec3(1.0,0.992,0.973);',
-  'const vec3 HAZE=vec3(0.965,0.895,0.70);',
-  GUST_GLSL,
-  // the colour of the canopy of ears, seen from a distance, for a given gust
-  'vec3 canopy(float g){',
-  '  vec3 trough=mix(vec3(0.50,0.36,0.07),DEEP,0.26);',
-  '  vec3 mid=mix(GOLD,LEAF,0.55);',
-  '  vec3 crest=mix(LEAF,PALE,0.80);',
-  '  float k=smoothstep(0.05,0.95,g);',
-  '  return mix(mix(trough,mid,smoothstep(0.0,0.55,k)),crest,smoothstep(0.45,1.0,k));',
-  '}'].join('\n');
-
-  var BG_VS='attribute vec2 aPos; void main(){ gl_Position=vec4(aPos,0.0,1.0); }';
-  var BG_FS=[
-  '#ifdef GL_FRAGMENT_PRECISION_HIGH','precision highp float;','#else','precision mediump float;','#endif',
-  COMMON,
-  'float hash(float n){ return fract(sin(n)*43758.5453); }',
-  'float hash2(vec2 p){ return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453); }',
-  'float vn(float x){ float i=floor(x), f=fract(x); f=f*f*(3.0-2.0*f); return mix(hash(i),hash(i+1.0),f); }',
+  '}',
+  'float hash(vec2 p){ p=fract(p*vec2(123.34,456.21)); p+=dot(p,p+45.32); return fract(p.x*p.y); }',
+  'const float PA='+ASPECT.toFixed(4)+';',                         // the painting is this many times wider than tall
+  'float horizon(float x){ return 0.305-0.085*smoothstep(0.25,1.0,x); }',   // where the ground ends in the painting: the far downs on the left, the hill of tents on the right
+  'const float NR=92.0, EXPO=0.55;',
   'void main(){',
-  '  vec2 p=gl_FragCoord.xy/uRes*2.0-1.0;',
-  '  float aa=2.5/uRes.y;',
-  '  float xa=p.x*uAsp;',
-  // the low sun, off to the right, a little above the downs
-  '  vec2 sd=vec2((xa-0.62*uAsp)*0.55,(p.y-uHor-0.10));',
-  '  float sun=exp(-dot(sd,sd)*2.2), core=exp(-dot(sd,sd)*26.0);',
-  // sky: the paper itself at the top, warming toward the horizon
-  '  float s=clamp((p.y-uHor)/(1.0-uHor),0.0,1.0);',
-  '  vec3 sky=mix(vec3(0.985,0.925,0.735),PAPER,smoothstep(0.0,0.9,s));',
-  '  sky=mix(sky,vec3(1.0,0.89,0.60),0.55*sun);',
-  '  sky=mix(sky,vec3(1.0,0.975,0.88),0.85*core);',
-  // two lines of downland, and a hedge where the field ends
-  '  float h1=uHor+0.060+0.034*sin(xa*0.9+0.4)+0.016*sin(xa*2.3+2.0)+0.006*sin(xa*5.1);',
-  '  float h2=uHor+0.022+0.024*sin(xa*1.3+3.6)+0.010*sin(xa*3.4+1.0)+0.004*vn(xa*9.0);',
-  '  float h3=uHor+0.004+0.010*vn(xa*13.0+3.0)+0.007*vn(xa*41.0)+0.012*smoothstep(0.55,0.9,vn(xa*5.0+7.0));',
-  '  vec3 c1=mix(mix(VIR,HAZE,0.80),vec3(1.0,0.90,0.66),0.5*sun);',
-  '  vec3 c2=mix(mix(DEEP,HAZE,0.62),vec3(0.98,0.84,0.52),0.5*sun);',
-  '  vec3 c3=mix(mix(DEEP,vec3(0.07,0.14,0.15),0.35),HAZE,0.30+0.25*sun);',
-  '  vec3 col=sky;',
-  '  col=mix(col,c1,smoothstep(aa,-aa,p.y-h1));',
-  '  col=mix(col,c2,smoothstep(aa,-aa,p.y-h2));',
-  '  col=mix(col,c3,smoothstep(aa,-aa,p.y-h3));',
-  // the field: each pixel below the horizon is a point on the canopy
-  '  float below=uHor-p.y;',
-  '  if(below>-aa){',
-  '    float Z=uF*(CAM-0.90)/max(below,0.0008);',
-  '    float X=xa*Z/uF;',
-  '    float g=clamp(gust(vec2(X,Z),uT)*uS+touch(p),0.0,1.0);',
-  '    vec3 f=canopy(g);',
-  '    float grain=hash2(floor(gl_FragCoord.xy*vec2(1.0,0.45)))-0.5;',
-  '    f*=1.0+0.10*grain*smoothstep(260.0,30.0,Z);',
-  // near the eye the stalks are drawn one by one, over the shade between them
-  '    float near=smoothstep(uZF*0.50,uZF*0.16,Z);',
-  '    vec3 shade=mix(vec3(0.10,0.22,0.16),vec3(0.34,0.33,0.12),g);',
-  '    f=mix(f,shade,0.88*near);',
-  '    float hz=1.0-exp(-Z/60.0);',
-  '    f=mix(f,mix(HAZE,vec3(1.0,0.90,0.64),sun),hz*0.80);',
-  '    f=mix(f,vec3(1.0,0.90,0.62),0.22*sun*(1.0-near));',
-  '    col=mix(col,f,smoothstep(-aa,aa,below));',
+  '  vec2 uv=vec2(gl_FragCoord.x/uRes.x,1.0-gl_FragCoord.y/uRes.y);',
+  // cover-fit the painting in the box, keeping the arena and the crowd in view
+  '  vec2 tc=uv; if(uAsp>PA){ float s=PA/uAsp; tc.y=0.60+(uv.y-0.56)*s; } else { float s=uAsp/PA; tc.x=0.47+(uv.x-0.5)*s; }',
+  '  vec3 paint=texture2D(uTex,tc).rgb;',
+  '  float yh=horizon(tc.x); float d=(tc.y-yh)/(1.0-yh);',           // 0 at the horizon, 1 at the foot of the picture
+  '  vec3 col=paint;',
+  '  if(d>0.0){',
+  '    float gr=smoothstep(0.0,0.06,d);',
+  '    col=mix(paint,paint*0.84,gr);',                              // the ground between the strokes sits a little in their shade
+  '    float X=tc.x*PA; float Rp=pow(d,EXPO)*NR; float base=floor(Rp); float pxw=(uAsp>PA?PA:uAsp)/uRes.x*0.9;',
+  '    vec2 q=(uQ*0.5+0.5); q.y=1.0-q.y;',
+  '    for(int j=0;j<=4;j++){',                                      // rows rooted below this pixel, far to near: nearer strokes paint over farther ones
+  '      float ri=base+float(j); float di=pow(ri/NR,1.0/EXPO); if(di>1.25) continue;',
+  '      float yi=yh+(1.0-yh)*di;',
+  '      float hb=mix(0.010,0.078,pow(clamp(di,0.0,1.0),1.25))*(0.85+0.3*hash(vec2(ri,7.0)));',
+  '      float sp=(1.0-yh)*(pow((ri+1.0)/NR,1.0/EXPO)-di);',
+  '      float cw=hb*0.17; float off=hash(vec2(ri,3.0));',
+  '      float c0=floor(X/cw+off);',
+  '      for(int k=-1;k<=1;k++){',
+  '        float ci=c0+float(k); float rnd=hash(vec2(ci,ri)); float rnd2=hash(vec2(ri,ci)+11.0);',
+  '        float xr=(ci-off+0.2+0.6*rnd)*cw; float yj=yi+(rnd2-0.5)*sp*0.95; float fy=(yj-tc.y)/hb; if(fy<0.0||fy>1.0) continue;',
+  '        vec2 rootTc=vec2(xr/PA,yj-hb*0.15);',
+  '        vec2 G=vec2((xr-0.80*PA)/(di+0.10)*3.2,7.5/(di+0.10));',   // where this root stands on the ground, in rough metres
+  '        float g=gust(G,uT)*uS;',
+  '        vec2 ruv=rootTc; if(uAsp>PA){ ruv.y=0.56+(rootTc.y-0.60)*uAsp/PA; } else { ruv.x=0.5+(rootTc.x-0.47)*PA/uAsp; }',
+  '        float dq=distance(ruv*vec2(uAsp,1.0),q*vec2(uAsp,1.0)); g+=uPk*exp(-dq*dq/0.018);',   // a hand run through it
+  '        g=clamp(g,0.0,1.6);',
+  '        float lean=-(g*0.95+0.05*sin(uT*2.3+rnd*6.283)*(0.3+g))*hb*(0.75+0.5*rnd2);',
+  '        float xc=xr+lean*pow(fy,1.6);',
+  '        float hw=cw*mix(0.24,0.06,fy)+cw*0.24*smoothstep(0.58,0.78,fy)*(1.0-smoothstep(0.90,1.0,fy));',   // a stem, and a fuller head near the tip
+  '        float a=(1.0-smoothstep(hw-pxw,hw+pxw,abs(X-xc)))*(1.0-smoothstep(0.93,1.0,fy))*smoothstep(0.0,0.04,fy); if(a<=0.0) continue;',
+  '        vec3 cb=texture2D(uTex,rootTc).rgb;',
+  '        vec3 st=cb*mix(0.64,1.12,fy);',                           // in its own shade at the root, lit at the tip
+  '        st+=vec3(1.0,0.92,0.70)*(g*0.46*smoothstep(0.25,1.0,fy));',  // bent, the head turns its flank to the low sun
+  '        st=mix(st,cb,0.15);',
+  '        col=mix(col,st,a*gr*0.9*uQual);',
+  '      }',
+  '    }',
   '  }',
+  '  float vg=smoothstep(1.25,0.35,length((uv-0.5)*vec2(1.0,0.9)));',
+  '  col*=mix(0.86,1.0,vg); col+=vec3(0.05,0.035,0.0)*(1.0-uv.y)*0.5;',  // a little warmth from the low sun
   '  gl_FragColor=vec4(col,1.0);',
   '}'].join('\n');
 
-  var ST_VS=[
-  'precision highp float;',
-  COMMON,
-  'attribute vec4 aRoot;',               // X, Z, length, random
-  'attribute vec4 aP;',                  // t along the stalk, side, awn fan, kind + tint
-  'varying vec3 vCol; varying float vA; varying float vSide;',
-  'vec2 proj(vec3 w){ return vec2(uF*w.x/(w.z*uAsp), uHor+uF*(w.y-CAM)/w.z); }',
-  'vec3 curve(float t,float bend,vec2 wd,float nod){',
-  '  float L=aRoot.z; float te=max(t-1.0,0.0);',
-  '  float lean=bend*t*t+nod*te*(1.0+4.0*te);',
-  '  float y=L*(t-0.30*bend*bend*t*t*t-nod*te*te*4.5);',
-  '  return vec3(aRoot.x+wd.x*lean*L,y,aRoot.y+wd.y*lean*L);',
-  '}',
-  'void main(){',
-  '  float kind=floor(aP.w+0.001), tint=fract(aP.w)/0.9, rnd=aRoot.w;',
-  '  float t=aP.x, side=aP.y;',
-  '  float g=clamp(gust(aRoot.xy,uT)*uS+touch(proj(vec3(aRoot.x,aRoot.z*0.9,aRoot.y))),0.0,1.0);',
-  '  float om=6.2+3.0*rnd;',
-  '  float bend=(0.015+0.46*g)*(0.62+0.6*fract(rnd*9.1))+0.035*sin(uT*om+rnd*40.0)*(0.35+g);',
-  '  float sw=0.22*sin(uT*om*0.63+rnd*71.0)*(0.3+0.7*g);',
-  '  vec2 wd=normalize(WIND+vec2(-WIND.y,WIND.x)*sw+vec2(rnd-0.5,fract(rnd*7.3)-0.5)*0.7);',
-  '  float nod=0.30+1.1*bend+0.45*fract(rnd*3.7);',
-  '  vec3 w0=curve(t,bend,wd,nod);',
-  '  vec2 p0=proj(w0), p1=proj(curve(t+0.02,bend,wd,nod));',
-  '  vec2 tp=normalize((p1-p0)*uRes);',
-  '  vec2 n=vec2(-tp.y,tp.x); if(n.x<0.0) n=-n;',
-  '  float ppm=uF/w0.z*uRes.y*0.5;',    // device pixels in a metre, here
-  '  float te=clamp((t-1.0)/0.115,0.0,1.0);',
-  '  vec2 off; vec3 col; float a=1.0;',
-  '  float lit=0.5+0.5*side;',          // the sun is to the right
-  '  if(kind<0.5){',                    // stem
-  '    float hw=max(0.0024*ppm,0.55)+0.5;',
-  '    off=n*side*hw;',
-  '    vec3 low=mix(vec3(0.10,0.21,0.14),DEEP,0.25), high=mix(vec3(0.70,0.56,0.18),vec3(0.36,0.50,0.22),0.55*tint);',
-  '    col=mix(low,high,smoothstep(0.30,1.0,t));',
-  '    col*=mix(0.50,1.0,smoothstep(0.35,0.98,t))*(0.86+0.22*lit);',
-  '  }else if(kind<1.5){',              // the ear
-  '    float prof=pow(sin(3.14159*(0.10+0.86*te)),0.75);',
-  '    float hw=max(0.0078*ppm*prof,0.5)+0.5;',
-  '    off=n*side*hw;',
-  '    vec3 base=canopy(g)*(0.84+0.26*fract(rnd*5.3))*(0.90+0.16*g);',
-  '    base=mix(base,vec3(0.36,0.50,0.22),0.50*tint);',
-  '    col=mix(base*0.72,mix(base,vec3(1.0,0.95,0.78),0.30+0.30*g),lit*lit);',
-  '    col+=vec3(1.0,0.93,0.70)*g*g*g*0.20;',
-  '  }else{',                           // an awn: a hair of light off the ear
-  '    float fan=aP.z; float c=cos(fan), s=sin(fan);',
-  '    vec2 d=vec2(tp.x*c-tp.y*s,tp.x*s+tp.y*c);',
-  '    float tip=1.0-abs(side);',
-  '    float len=(0.05+0.05*fract(rnd*11.0+abs(fan)*3.0))*ppm;',
-  '    off=d*tip*len+vec2(-d.y,d.x)*side*(max(0.0011*ppm,0.35)+0.4);',
-  '    col=mix(LEAF,PALE,0.50+0.4*g); a=0.50*(1.0-0.5*tip);',
-  '    side=0.0;',
-  '  }',
-  '  float hz=1.0-exp(-w0.z/60.0);',
-  '  vec2 sd=vec2((p0.x-0.62)*uAsp*0.55,(p0.y-uHor-0.10));',
-  '  float sun=exp(-dot(sd,sd)*2.2);',
-  '  col=mix(col,mix(HAZE,vec3(1.0,0.90,0.64),sun),hz*0.80);',
-  '  col=mix(col,vec3(1.0,0.90,0.62),0.16*sun);',
-  '  vCol=col; vSide=side;',
-  '  vA=a*smoothstep(uZF,uZF*0.45,aRoot.y);',
-  '  gl_Position=vec4(p0+off*2.0/uRes,0.0,1.0);',
-  '}'].join('\n');
-  var ST_FS=[
-  'precision mediump float;',
-  'varying vec3 vCol; varying float vA; varying float vSide;',
-  'void main(){',
-  '  float a=vA*smoothstep(1.0,0.45,abs(vSide));',
-  '  gl_FragColor=vec4(vCol*a,a);',
-  '}'].join('\n');
-
-  var gl=null, progBG, progST, bufBG, bufST, nVerts=0, uBG={}, uST={};
-  var W=0,H=0,DPR=1,F=5,HOR=0.42,ZF=30,quality=1,built=false;
-
-  function compile(type,src){
-    var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s);
-    if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){ var m=gl.getShaderInfoLog(s); gl.deleteShader(s); throw new Error('grain shader: '+m); }
-    return s;
-  }
-  function program(vs,fs,names){
-    var p=gl.createProgram();
-    gl.attachShader(p,compile(gl.VERTEX_SHADER,vs)); gl.attachShader(p,compile(gl.FRAGMENT_SHADER,fs));
-    gl.linkProgram(p);
-    if(!gl.getProgramParameter(p,gl.LINK_STATUS)) throw new Error('grain link: '+gl.getProgramInfoLog(p));
-    var u={}; names.forEach(function(n){ u[n]=gl.getUniformLocation(p,n); });
-    return [p,u];
-  }
+  var gl=null, prog=null, U={}, tex=null, built=false, W=2, H=2, quality=1;
+  function compile(type,src){ var s=gl.createShader(type); gl.shaderSource(s,src); gl.compileShader(s); if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)){ throw new Error(gl.getShaderInfoLog(s)||'shader'); } return s; }
   function initGL(){
-    gl=cv.getContext('webgl',{antialias:true,alpha:false,powerPreference:'low-power'});
-    if(!gl) return false;
-    var names=['uT','uRes','uF','uHor','uAsp','uZF','uS','uPk','uP','uQ'];
-    var a=program(BG_VS,BG_FS,names); progBG=a[0]; uBG=a[1];
-    var b=program(ST_VS,ST_FS,names); progST=b[0]; uST=b[1];
-    bufBG=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,bufBG);
-    gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
-    bufST=gl.createBuffer();
-    gl.disable(gl.DEPTH_TEST);
-    gl.blendFunc(gl.ONE,gl.ONE_MINUS_SRC_ALPHA);
+    gl=cv.getContext('webgl',{antialias:false,alpha:false,powerPreference:'low-power'}); if(!gl) return false;
+    prog=gl.createProgram(); gl.attachShader(prog,compile(gl.VERTEX_SHADER,VS)); gl.attachShader(prog,compile(gl.FRAGMENT_SHADER,FS)); gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS)) throw new Error('link');
+    gl.useProgram(prog); ['uTex','uRes','uT','uS','uPk','uAsp','uQual','uQ'].forEach(function(k){ U[k]=gl.getUniformLocation(prog,k); });
+    var b=gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER,b); gl.bufferData(gl.ARRAY_BUFFER,new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]),gl.STATIC_DRAW);
+    var a=gl.getAttribLocation(prog,'aPos'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
     return true;
   }
-
-  /* ---- the field: every near stalk, as ribbons, far rows first ---- */
-  function buildField(){
-    var cssW=box.clientWidth, cssH=box.clientHeight;
-    if(cssW<2||cssH<2) return false;
-    DPR=Math.min(window.devicePixelRatio||1, cssW<700?1.5:2);
-    if(quality<0.6) DPR=Math.min(DPR,1.25);
-    W=Math.round(cssW*DPR); H=Math.round(cssH*DPR);
-    cv.width=W; cv.height=H;
-    var asp=W/H;
-    F=1.0+1.6*asp; HOR=asp>1.8?0.42:0.40;
-    var ppmAt=function(Z){ return F/Z*cssH*0.5; };             // CSS pixels in a metre at depth Z
-    ZF=Math.min(64,F*cssH*0.5/15);
-    var ZN=F*0.65/(HOR+1.25);
-    var seed=20260624; var rnd=function(){ seed=(seed*1664525+1013904223)>>>0; return seed/4294967296; };
-    var out=[];
-    var push=function(X,Z,L,r,t,side,fan,kt){ out.push(X,Z,L,r,t,side,fan,kt); };
-    var ribbon=function(X,Z,L,r,t0,t1,segs,kt){
-      for(var i=0;i<segs;i++){
-        var a=t0+(t1-t0)*i/segs, b=t0+(t1-t0)*(i+1)/segs;
-        push(X,Z,L,r,a,-1,0,kt); push(X,Z,L,r,a,1,0,kt); push(X,Z,L,r,b,-1,0,kt);
-        push(X,Z,L,r,b,-1,0,kt); push(X,Z,L,r,a,1,0,kt); push(X,Z,L,r,b,1,0,kt);
-      }
-    };
-    for(var Z=ZF; Z>ZN; Z/=1.058){
-      var ppm=ppmAt(Z);
-      var sp=Math.max(4.0,0.064*ppm)/quality;              // CSS px between stalks in this row
-      var half=asp/F*Z+0.9;                                     // half-width of the row in metres, with room to lean
-      var n=Math.ceil(2*half*ppm/sp);
-      var near=ppm>105, mid=ppm>50;
-      for(var i=0;i<n;i++){
-        var X=-half+(i+rnd())*(2*half/n);
-        var z=Z*(1+(rnd()-0.5)*0.05);
-        var L=0.80+0.22*rnd(), r=rnd();
-        var tint=Math.pow(rnd(),2.2)*0.999;                     // a few ears are still green
-        var ks=0+tint*0.9, ke=1+tint*0.9, ka=2+tint*0.9;
-        if(near){ ribbon(X,z,L,r,0.0,1.0,4,ks); ribbon(X,z,L,r,1.0,1.115,4,ke); }
-        else if(mid){ ribbon(X,z,L,r,0.45,1.0,1,ks); ribbon(X,z,L,r,1.0,1.115,3,ke); }
-        else{ ribbon(X,z,L,r,0.62,1.0,1,ks); ribbon(X,z,L,r,1.0,1.115,2,ke); }
-        var awns=near?5:(mid?2:0);
-        for(var k=0;k<awns;k++){
-          var ta=1.012+0.095*(k+rnd())/awns;
-          var fan=(k%2?1:-1)*(0.10+0.34*rnd());
-          push(X,z,L,r,ta,-1,fan,ka); push(X,z,L,r,ta,1,fan,ka); push(X,z,L,r,ta,0,fan,ka);
-        }
-      }
-    }
-    var data=new Float32Array(out); nVerts=data.length/8;
-    gl.bindBuffer(gl.ARRAY_BUFFER,bufST); gl.bufferData(gl.ARRAY_BUFFER,data,gl.STATIC_DRAW);
-    gl.viewport(0,0,W,H);
-    built=true; return true;
+  function size(){
+    var r=box.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2)*(quality<1?0.75:1);
+    W=Math.max(2,Math.round(r.width*dpr)); H=Math.max(2,Math.round(r.height*dpr)); cv.width=W; cv.height=H; gl.viewport(0,0,W,H);
   }
-
-  function setU(u,t){
-    gl.uniform1f(u.uT,t); gl.uniform2f(u.uRes,W,H); gl.uniform1f(u.uF,F);
-    gl.uniform1f(u.uHor,HOR); gl.uniform1f(u.uAsp,W/H); gl.uniform1f(u.uZF,ZF);
-    gl.uniform1f(u.uS,sNow); gl.uniform1f(u.uPk,pk); gl.uniform2f(u.uP,px,py); gl.uniform2f(u.uQ,qx,qy);
+  function loadTex(done){
+    var im=new Image(); im.onload=function(){
+      tex=gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D,tex); gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,false);
+      gl.texImage2D(gl.TEXTURE_2D,0,gl.RGB,gl.RGB,gl.UNSIGNED_BYTE,im);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER,gl.LINEAR); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MAG_FILTER,gl.LINEAR);
+      gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_S,gl.CLAMP_TO_EDGE); gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_WRAP_T,gl.CLAMP_TO_EDGE);
+      built=true; done();
+    }; im.onerror=function(){ fallback(); }; im.src=SRC;
   }
+  var sNow=1, pk=0, px=0, py=-0.4, qx=0, qy=-0.4;
   function draw(t){
     if(!gl||!built) return;
-    gl.useProgram(progBG); setU(uBG,t);
-    gl.disable(gl.BLEND);
-    gl.bindBuffer(gl.ARRAY_BUFFER,bufBG);
-    var a=gl.getAttribLocation(progBG,'aPos'); gl.enableVertexAttribArray(a); gl.vertexAttribPointer(a,2,gl.FLOAT,false,0,0);
+    gl.uniform1i(U.uTex,0); gl.uniform2f(U.uRes,W,H); gl.uniform1f(U.uT,t); gl.uniform1f(U.uS,sNow); gl.uniform1f(U.uPk,pk); gl.uniform1f(U.uAsp,W/H); gl.uniform1f(U.uQual,1.0); gl.uniform2f(U.uQ,qx,qy);
     gl.drawArrays(gl.TRIANGLES,0,6);
-    gl.useProgram(progST); setU(uST,t);
-    gl.enable(gl.BLEND);
-    gl.bindBuffer(gl.ARRAY_BUFFER,bufST);
-    var r=gl.getAttribLocation(progST,'aRoot'), p=gl.getAttribLocation(progST,'aP');
-    gl.enableVertexAttribArray(r); gl.vertexAttribPointer(r,4,gl.FLOAT,false,32,0);
-    gl.enableVertexAttribArray(p); gl.vertexAttribPointer(p,4,gl.FLOAT,false,32,16);
-    gl.drawArrays(gl.TRIANGLES,0,nVerts);
   }
-
   /* ---- running, pausing, and staying smooth ---- */
-  var sNow=1, pk=0, px=0, py=-0.4, qx=0, qy=-0.4;
   var tNow=STILL_T, last=0, raf=0, wind=!reduce, onscreen=true, visible=!document.hidden;
   var LEVELS={still:[0,1],breeze:[0.55,0.6],wind:[1,1],gale:[1.7,1.32]}, rate=wind?1:0, sWant=1, pkWant=0, pActive=0;
   var slow=0, frames=0, downgrades=0;
   function shouldRun(){ return (wind||pk>0.004||pkWant>0)&&onscreen&&visible&&built; }
   function frame(now){
-    raf=0;
-    if(!shouldRun()) return;
+    raf=0; if(!shouldRun()) return;
     var dt=last?(now-last)/1000:0; last=now;
     if(dt>0){
       frames++; if(dt>0.034) slow++;
-      if(dt>0.1) dt=0.033;                                     // after a stall, do not leap
-      if(frames>=50){                                          // slow frames: thin the field, once or twice
-        if(slow>30&&downgrades<2){ downgrades++; quality*=0.62; buildField(); }
-        frames=0; slow=0;
-      }
+      if(dt>0.1) dt=0.033;
+      if(frames>=50){ if(slow>30&&downgrades<1){ downgrades++; quality=0.62; size(); } frames=0; slow=0; }     // slow frames: draw fewer pixels, once
     }
     sNow+=(sWant-sNow)*Math.min(1,dt*1.6);
-    if(pkWant>0&&performance.now()-pActive>900) pkWant=0;                // the visitor's gust dies away when the hand stops
+    if(pkWant>0&&performance.now()-pActive>900) pkWant=0;
     pk+=(pkWant-pk)*Math.min(1,dt*(pkWant>pk?5:1.1)); qx+=(px-qx)*Math.min(1,dt*2.2); qy+=(py-qy)*Math.min(1,dt*2.2);
     tNow+=dt*(wind?rate:0.35*pk);
     draw(tNow);
@@ -868,7 +704,7 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   function kick(){ if(shouldRun()&&!raf){ last=0; raf=requestAnimationFrame(frame); } }
   var levelBtns={still:bStill,breeze:document.getElementById('isBreeze'),wind:bWind,gale:document.getElementById('isGale')};
   function setLevel(name){
-    var L=LEVELS[name]; wind=name!=='still'; if(wind){ rate=L[0]; sWant=L[1]; }
+    var L=LEVELS[name]; wind=name!=='still'; if(wind){ rate=L[0]; sWant=L[1]; } else { sWant=0; sNow=0; }
     for(var k in levelBtns) if(levelBtns[k]) levelBtns[k].setAttribute('aria-pressed',k===name?'true':'false');
     if(wind) kick(); else if(built) draw(tNow);
   }
@@ -879,37 +715,34 @@ footer .mark{font:italic 400 19px/1.3 var(--fell);letter-spacing:0;color:var(--i
   cv.addEventListener('pointermove',touchAt,{passive:true}); cv.addEventListener('pointerdown',touchAt,{passive:true});
   cv.addEventListener('pointerleave',function(){ pkWant=0; });
 
-  function start(){
-    try{ if(!initGL()) return fallback(); buildField(); }
-    catch(e){ return fallback(); }
-    draw(tNow);
-    setWind(wind);
+  function fallback(){                                         // no WebGL: the box shows the painting itself, quietly
+    gl=null; cv.style.display='none'; box.style.background='#3a3a2a url('+SRC+') center 60%/cover no-repeat';
+    if(bStill&&bStill.parentNode) bStill.parentNode.style.display='none';
   }
-  function fallback(){                                         // no WebGL: the box keeps its painted gradient
-    gl=null; cv.style.display='none';
-    bStill.parentNode.style.display='none';
+  function start(){
+    try{ if(!initGL()) return fallback(); size(); }
+    catch(e){ return fallback(); }
+    loadTex(function(){ draw(tNow); setWind(wind); });
   }
   var lastW=0, rz=0;
   function resized(){
     if(!gl) return;
     var w=box.clientWidth; if(w===lastW) return; lastW=w;
-    clearTimeout(rz); rz=setTimeout(function(){ buildField(); draw(tNow); kick(); },120);
+    clearTimeout(rz); rz=setTimeout(function(){ size(); draw(tNow); kick(); },120);
   }
   if('ResizeObserver' in window) new ResizeObserver(resized).observe(box); else window.addEventListener('resize',resized);
-  if('IntersectionObserver' in window){
-    new IntersectionObserver(function(es){ onscreen=es[0].isIntersecting; kick(); },{rootMargin:'60px'}).observe(box);
-  }
+  if('IntersectionObserver' in window){ new IntersectionObserver(function(es){ onscreen=es[0].isIntersecting; kick(); },{rootMargin:'60px'}).observe(box); }
   document.addEventListener('visibilitychange',function(){ visible=!document.hidden; kick(); });
   cv.addEventListener('webglcontextlost',function(e){ e.preventDefault(); built=false; });
-  cv.addEventListener('webglcontextrestored',function(){ try{ initGL(); buildField(); draw(tNow); kick(); }catch(e){ fallback(); } });
+  cv.addEventListener('webglcontextrestored',function(){ try{ initGL(); size(); loadTex(function(){ draw(tNow); kick(); }); }catch(e){ fallback(); } });
 
   lastW=box.clientWidth;
   start();
 
   // for tests: the model without drawing, and a way to draw any moment
   window.honami={ gust:gust, wind:WIND, speed:SPEED,
-    drawAt:function(t){ tNow=t; draw(t); }, setWind:setWind,
-    state:function(){ return {webgl:!!gl,built:built,verts:nVerts,width:W,height:H,quality:quality,running:!!raf,t:tNow}; } };
+    drawAt:function(t,s){ tNow=t; if(s!=null){ sNow=s; } draw(t); }, setWind:setWind, setLevel:setLevel,
+    state:function(){ return {webgl:!!gl,built:built,width:W,height:H,quality:quality,running:!!raf,t:tNow}; } };
 })();
 </script>
 <script>
