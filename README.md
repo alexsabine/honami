@@ -9,11 +9,12 @@ English and Source Serif 4, square corners, hairline "plates").
 **Live site:** https://www.honami.co.uk/
 
 It is a single, self-contained `index.html`: no build step, no framework, no
-dependencies. The hero is a small WebGL picture of what *honami* means: waves of
-wind moving across a field of ripening grain. It pauses off screen, shows a still
-when the visitor prefers reduced motion (or presses **Still**), and falls back to
-a plain gradient without WebGL. Everything — markup, styles, and the grain — lives
-in that one file. Fonts are loaded from Google Fonts, and one picture in the
+dependencies. The hero is a small WebGL picture of what *honami* means: waves
+moving across a field. The field is a stylised hillside with a crowd at its centre:
+wind crosses the grass, and rings of sound cross the crowd. It pauses off screen,
+shows a still when the visitor prefers reduced motion (or presses **Still**), and
+falls back to a plain picture without WebGL. Markup, styles and the animation live
+in that one file; its colours come from one small image, `festival-field.jpg`. Fonts are loaded from Google Fonts, and one picture in the
 showcase section is loaded from temporalgrammar.ai.
 
 ---
@@ -32,6 +33,12 @@ showcase section is loaded from temporalgrammar.ai.
 | `icon-16.png`, `icon-32.png`, `icon-48.png` | PNG favicons for modern browsers. |
 | `icon-180.png` | Apple touch icon (iOS home-screen). |
 | `icon-192.png`, `icon-512.png` | Android / PWA icons referenced by the manifest. |
+| `festival-field.jpg` | A small, soft colour map that the hero picture takes its colours from. |
+| `ball.png`, `ball-lg.png` | The sphere beside the wordmark and the name. |
+| `violinist.jpg` | A picture used in the page. |
+| `papers/` | A separate small page of papers and recordings, served at `/papers/`. |
+| `LICENSE`, `MARK.md` | Ownership, and a note on the sphere as a mark. |
+| `.nojekyll`, `.gitignore` | Housekeeping. |
 | `README.md` | This file. |
 
 **Important:** every file must sit in the **root** of the repository (the same
